@@ -3,5 +3,6 @@ import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [DatabaseModule],
+  exports: [DatabaseModule],
 })
 export class CommonModule {}

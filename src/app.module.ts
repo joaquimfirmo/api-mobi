@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CommonModule } from './common/common.module';
 import { CompanyModule } from './company/company.module';
+import { DatabaseModule } from './common/database/database.module';
+import { CityModule } from './city/city.module';
 
 @Module({
-  imports: [CommonModule, CompanyModule],
+  imports: [CompanyModule, ConfigModule.forRoot(), DatabaseModule, CityModule],
   controllers: [AppController],
   providers: [AppService],
 })

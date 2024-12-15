@@ -1,15 +1,13 @@
 import { Module, Logger, Scope } from '@nestjs/common';
 import { INQUIRER } from '@nestjs/core';
-import { CompanyService } from './company.service';
-import { CompanyRepository } from './company-repository';
-import { CompanyController } from './company.controller';
+import { CityService } from './city.service';
+import { CityRepository } from './city.repository';
 import { IbgeModule } from 'src/gateway/ibge/ibge.module';
-import { CityModule } from 'src/city/city.module';
 
 @Module({
   providers: [
-    CompanyService,
-    CompanyRepository,
+    CityService,
+    CityRepository,
     {
       provide: Logger,
       scope: Scope.TRANSIENT,
@@ -18,7 +16,7 @@ import { CityModule } from 'src/city/city.module';
         new Logger(parentClass.constructor.name),
     },
   ],
-  controllers: [CompanyController],
-  imports: [IbgeModule, CityModule],
+  exports: [CityService],
+  imports: [IbgeModule],
 })
-export class CompanyModule {}
+export class CityModule {}
