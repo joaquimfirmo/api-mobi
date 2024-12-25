@@ -49,10 +49,10 @@ export class CompanyRepository {
       return await trx
         .updateTable('empresas')
         .set({
-          razao_social: company.razaoSocial,
-          nome_fantasia: company.nomeFantasia,
-          cnpj: company.cnpj,
-          id_cidade: company.idCidade,
+          ...(company.razaoSocial && { razao_social: company.razaoSocial }),
+          ...(company.nomeFantasia && { nome_fantasia: company.nomeFantasia }),
+          ...(company.cnpj && { cnpj: company.cnpj }),
+          ...(company.idCidade && { id_cidade: company.idCidade }),
           updated_at: sql`now()`,
         })
         .where('id', '=', id)
@@ -62,6 +62,7 @@ export class CompanyRepository {
           'razao_social',
           'cnpj',
           'id_cidade',
+          'created_at',
           'updated_at',
         ])
         .executeTakeFirstOrThrow();
