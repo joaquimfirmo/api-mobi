@@ -6,49 +6,69 @@ import {
   Post,
   Put,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import CreateCompanyDto from './dtos/create-company-dto';
-type Company = {
-  id: string;
-  razao_social: string;
-  nome_fantasia: string;
-  cnpj: string;
-  id_cidade: string;
-  created_at: Date | string;
-  updated_at: Date | string | null;
-};
+import {
+  CreateCompanyRequestDTO,
+  CreateCompanyResponseDTO,
+  CompanyResponseDTO,
+  UpdateCompanyRequestDTO,
+} from './dtos';
+
 @Controller('empresas')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Get()
-  async getCompanies(): Promise<Company[]> {
+  async getCompanies(): Promise<CompanyResponseDTO[]> {
     return this.companyService.findAllCompanies();
   }
 
   @Get('empresa/:id')
-  async getCompany(@Param('id') id: string): Promise<string> {
+  async getCompany(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        version: '4',
+      }),
+    )
+    id: string,
+  ): Promise<CompanyResponseDTO> {
     return this.companyService.findCompanyById(id);
   }
 
   @Post('empresa')
   async createCompany(
-    @Body() createCompanyDto: CreateCompanyDto,
-  ): Promise<string> {
-    return this.companyService.createCompany(createCompanyDto);
+    @Body() payload: CreateCompanyRequestDTO,
+  ): Promise<CreateCompanyResponseDTO> {
+    return this.companyService.createCompany(payload);
   }
 
   @Put('empresa/:id')
   async updateCompany(
-    @Param('id') id: string,
-    @Body() company: any,
-  ): Promise<any> {
-    return this.companyService.updateCompany(id, company);
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        version: '4',
+      }),
+    )
+    id: string,
+    @Body() payload: UpdateCompanyRequestDTO,
+  ): Promise<CompanyResponseDTO> {
+    return this.companyService.updateCompany(id, payload);
   }
 
   @Delete('empresa/:id')
-  async deleteCompany(@Param('id') id: string): Promise<string> {
+  async deleteCompany(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        version: '4',
+      }),
+    )
+    id: string,
+  ): Promise<any> {
     return this.companyService.deleteCompany(id);
   }
 }
