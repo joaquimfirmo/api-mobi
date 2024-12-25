@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, map } from 'rxjs';
 import { AxiosError } from 'axios';
@@ -9,7 +9,7 @@ export class IbgeClient {
     private readonly httpService: HttpService,
     private readonly logger: Logger,
   ) {}
-  async getCitiesByState(uf: string): Promise<any[]> {
+  async getCitiesByState(uf: number): Promise<any[]> {
     const params = {
       orderBy: 'nome',
     };
@@ -23,7 +23,10 @@ export class IbgeClient {
         .pipe(
           catchError((error: AxiosError) => {
             this.logger.error(error.response.data);
-            throw 'An error happened!';
+            throw new HttpException(
+              'Erro ao buscar cidades por estado',
+              error.response.status,
+            );
           }),
         )
         .pipe(map((response) => response.data))
@@ -54,9 +57,12 @@ export class IbgeClient {
           params,
         })
         .pipe(
-          catchError((error: AxiosError) => {
+          catchError((error) => {
             this.logger.error(error.response.data);
-            throw 'An error happened!';
+            throw new HttpException(
+              'Erro ao buscar cidades por código do IBGE',
+              error.response.status,
+            );
           }),
         ),
     );
