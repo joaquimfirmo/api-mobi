@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
-import { IbgeClient } from 'src/gateway/ibge/ibge.client';
+import { IbgeClient } from '../gateway/ibge/ibge.client';
 import { CityRepository } from './city.repository';
 import City from './entities/city';
 
