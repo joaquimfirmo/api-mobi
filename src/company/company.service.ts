@@ -4,9 +4,8 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { IbgeClient } from 'src/gateway/ibge/ibge.client';
-import { CompanyRepository } from './company-repository';
-import { CityService } from 'src/city/city.service';
+import { CompanyRepository } from './company.repository';
+import { CityService } from '../city/city.service';
 import Company from './entities/company';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class CompanyService {
   constructor(
     private readonly logger: Logger,
     private readonly companyRepository: CompanyRepository,
-    private readonly ibgeClient: IbgeClient,
     private readonly cityService: CityService,
   ) {}
 
@@ -23,12 +21,13 @@ export class CompanyService {
     return this.companyRepository.findAll();
   }
 
-  async findCompanyById(id: string): Promise<string> {
+  async findCompanyById(id: string): Promise<any> {
     this.logger.log(`Buscando empresa com o ID:${id}`);
-    return this.companyRepository.findById(id);
+    const result = await this.companyRepository.findById(id);
+    return result[0];
   }
 
-  async createCompany(company: any): Promise<string> {
+  async createCompany(company: any): Promise<any> {
     this.logger.log(`Criando empresa: ${JSON.stringify(company)}`);
     const cityData = await this.cityService.findOrCreateCity(
       company.cidade,
@@ -62,8 +61,15 @@ export class CompanyService {
     return await this.companyRepository.create(newCompany);
   }
 
-  async updateCompany(id: string, company: any): Promise<string> {
+  async updateCompany(id: string, company: any): Promise<any> {
+    if (Object.keys(company).length === 0) {
+      this.logger.error('Dados para atualização da empresa não informados');
+      throw new BadRequestException(
+        'Dados para atualização da empresa não informados',
+      );
+    }
     this.logger.log(`Empresa para ser atualizada ${JSON.stringify(company)}`);
+
     return this.companyRepository.update(id, company);
   }
 
@@ -71,14 +77,14 @@ export class CompanyService {
     this.logger.log(`Empresa para ser excluida com o ID:${id}`);
     const companyExists = await this.companyRepository.findById(id);
 
-    if (companyExists.length === 0) {
+    if (!companyExists) {
       throw new NotFoundException(
         `Empresa com o ID:${id} informado não foi encontrada`,
       );
     }
-    const companyId = await this.companyRepository.delete(id);
+    const company = await this.companyRepository.delete(id);
     return {
-      message: `Empresas com o ID: ${JSON.stringify(companyId)}foi excluída com sucesso`,
+      message: `Empresas com o ID: ${company.id} foi excluída com sucesso`,
     };
   }
 
