@@ -6,6 +6,7 @@ import {
   IsInt,
   IsNumberString,
   IsNotEmpty,
+  IsOptional,
 } from 'class-validator';
 
 export default class CreateCompanyRequestDTO {
@@ -21,7 +22,7 @@ export default class CreateCompanyRequestDTO {
   @MaxLength(100, {
     message: 'Nome da empresa deve ter no máximo 100 caracteres',
   })
-  razao_social: string;
+  razaoSocial: string;
 
   @IsNotEmpty({
     message: 'Nome fantasia é obrigatório',
@@ -35,7 +36,7 @@ export default class CreateCompanyRequestDTO {
   @MaxLength(100, {
     message: 'Nome fantasia deve ter no máximo 100 caracteres',
   })
-  nome_fantasia: string;
+  nomeFantasia: string;
 
   @IsNotEmpty({
     message: 'CNPJ é obrigatório',
@@ -77,5 +78,8 @@ export default class CreateCompanyRequestDTO {
   @IsInt({
     message: 'Código da cidade deve ser um número inteiro',
   })
-  codigo_cidade: number;
+  codigoCidade: number;
+
+  @IsOptional()
+  idCidade?: string | null;
 }
