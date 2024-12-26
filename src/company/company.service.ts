@@ -7,6 +7,12 @@ import {
 import { CompanyRepository } from './company.repository';
 import { CityService } from '../city/city.service';
 import Company from './entities/company';
+import {
+  CreateCompanyRequestDTO,
+  CreateCompanyResponseDTO,
+  CompanyResponseDTO,
+  UpdateCompanyRequestDTO,
+} from './dtos';
 
 @Injectable()
 export class CompanyService {
@@ -16,23 +22,25 @@ export class CompanyService {
     private readonly cityService: CityService,
   ) {}
 
-  async findAllCompanies(): Promise<any[]> {
+  async findAllCompanies(): Promise<CompanyResponseDTO[]> {
     this.logger.log('Buscando todas as empresas');
     return this.companyRepository.findAll();
   }
 
-  async findCompanyById(id: string): Promise<any> {
+  async findCompanyById(id: string): Promise<CompanyResponseDTO> {
     this.logger.log(`Buscando empresa com o ID:${id}`);
     const result = await this.companyRepository.findById(id);
     return result[0];
   }
 
-  async createCompany(company: any): Promise<any> {
+  async createCompany(
+    company: CreateCompanyRequestDTO,
+  ): Promise<CreateCompanyResponseDTO> {
     this.logger.log(`Criando empresa: ${JSON.stringify(company)}`);
     const cityData = await this.cityService.findOrCreateCity(
       company.cidade,
       company.uf,
-      company.codigo_cidade,
+      company.codigoCidade,
     );
 
     const cnpjExists = await this.verifyCnpjExists(company.cnpj);
@@ -43,7 +51,7 @@ export class CompanyService {
     }
 
     const razaoSocialExists = await this.verifyRazaoSocialExists(
-      company.razao_social,
+      company.razaoSocial,
     );
 
     if (razaoSocialExists) {
@@ -53,15 +61,18 @@ export class CompanyService {
     }
 
     const newCompany = new Company(
-      company.razao_social,
-      company.nome_fantasia,
+      company.razaoSocial,
+      company.nomeFantasia,
       company.cnpj,
       cityData.id,
     );
     return await this.companyRepository.create(newCompany);
   }
 
-  async updateCompany(id: string, company: any): Promise<any> {
+  async updateCompany(
+    id: string,
+    company: UpdateCompanyRequestDTO,
+  ): Promise<CompanyResponseDTO> {
     if (Object.keys(company).length === 0) {
       this.logger.error('Dados para atualização da empresa não informados');
       throw new BadRequestException(
@@ -73,7 +84,7 @@ export class CompanyService {
     return this.companyRepository.update(id, company);
   }
 
-  async deleteCompany(id: string): Promise<any> {
+  async deleteCompany(id: string): Promise<string> {
     this.logger.log(`Empresa para ser excluida com o ID:${id}`);
     const companyExists = await this.companyRepository.findById(id);
 
@@ -83,9 +94,7 @@ export class CompanyService {
       );
     }
     const company = await this.companyRepository.delete(id);
-    return {
-      message: `Empresas com o ID: ${company.id} foi excluída com sucesso`,
-    };
+    return `Empresas com o ID: ${company.id} foi excluída com sucesso`;
   }
 
   async verifyCnpjExists(cnpj: string): Promise<boolean> {
