@@ -69,23 +69,27 @@ describe('CompanyController', () => {
       updated_at: null,
     };
 
-    jest.spyOn(service, 'findCompanyById').mockResolvedValueOnce([company]);
-    expect(await controller.getCompany('1')).toEqual([company]);
+    jest.spyOn(service, 'findCompanyById').mockResolvedValueOnce(company);
+    expect(await controller.getCompany('1')).toEqual(company);
     expect(service.findCompanyById).toHaveBeenCalledTimes(1);
   });
 
   it('should call createCompany method from service', async () => {
     const company = {
+      razaoSocial: 'Company 1',
+      nomeFantasia: 'Company 1',
+      cnpj: '123456789012',
+      cidade: 'City 1',
+      uf: 'UF',
+      codigoCidade: 1222,
+    };
+
+    const result = {
       razao_social: 'Company 1',
       nome_fantasia: 'Company 1',
       cnpj: '123456789012',
       cidade: 'City 1',
       uf: 'UF',
-      codigo_cidade: 1222,
-    };
-
-    const result = {
-      ...company,
       id: '1',
       id_cidade: '1',
       created_at: new Date(),
@@ -111,6 +115,7 @@ describe('CompanyController', () => {
     const result = {
       ...company,
       razao_social: 'Company 2',
+      id_cidade: '2',
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -131,9 +136,7 @@ describe('CompanyController', () => {
       updated_at: null,
     };
 
-    const deleteMessage = {
-      messagem: `Empresas com o ID: ${JSON.stringify(company.id)}foi excluída com sucesso`,
-    };
+    const deleteMessage = `Empresas com o ID: ${JSON.stringify(company.id)}foi excluída com sucesso`;
 
     jest.spyOn(service, 'deleteCompany').mockResolvedValueOnce(deleteMessage);
     expect(await controller.deleteCompany('1')).toBe(deleteMessage);
