@@ -60,6 +60,7 @@ export class CompanyRepository {
             'cnpj',
             'id_cidade',
             'created_at',
+            'updated_at',
           ])
           .executeTakeFirstOrThrow();
       });
