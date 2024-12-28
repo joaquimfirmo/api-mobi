@@ -19,7 +19,7 @@ export const databaseProviders = [
           }),
         });
         return new Kysely<Database>({
-          log: ['query', 'error'],
+          log: process.env.NODE_ENV === 'development' ? ['query', 'error'] : [],
           dialect,
         });
       } catch (e) {
