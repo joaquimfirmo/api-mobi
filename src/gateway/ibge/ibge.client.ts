@@ -58,10 +58,10 @@ export class IbgeClient {
         })
         .pipe(
           catchError((error) => {
-            this.logger.error(error.response.data);
+            this.logger.error(error);
             throw new HttpException(
               'Erro ao buscar cidades por código do IBGE',
-              error.response.status,
+              error,
             );
           }),
         ),

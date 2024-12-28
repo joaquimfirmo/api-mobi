@@ -273,6 +273,6 @@ describe('IbgeClient', () => {
     await expect(service.getCityByCode(1)).rejects.toEqual(
       new HttpException('Erro ao buscar cidades por código do IBGE', 404),
     );
-    expect(logger.error).toHaveBeenCalledWith('Cidade não encontrada');
+    expect(logger.error).toHaveBeenCalledWith(error);
   });
 });
