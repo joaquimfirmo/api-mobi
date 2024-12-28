@@ -35,21 +35,21 @@ describe('CompanyController', () => {
     const companies = [
       {
         id: '1',
-        razao_social: 'Company 1',
-        nome_fantasia: 'Company 1',
+        razaoSocial: 'Company 1',
+        nomeFantasia: 'Company 1',
         cnpj: '123456789012',
-        id_cidade: '1',
-        created_at: new Date(),
-        updated_at: null,
+        idCidade: '1',
+        createdAt: new Date(),
+        updatedAt: null,
       },
       {
         id: '2',
-        razao_social: 'Company 2',
-        nome_fantasia: 'Company 2',
+        razaoSocial: 'Company 2',
+        nomeFantasia: 'Company 2',
         cnpj: '123456789013',
-        id_cidade: '2',
-        created_at: new Date(),
-        updated_at: null,
+        idCidade: '2',
+        createdAt: new Date(),
+        updatedAt: null,
       },
     ];
 
@@ -61,12 +61,12 @@ describe('CompanyController', () => {
   it('should call findCompanyById method from service', async () => {
     const company = {
       id: '1',
-      razao_social: 'Company 1',
-      nome_fantasia: 'Company 1',
+      razaoSocial: 'Company 1',
+      nomeFantasia: 'Company 1',
       cnpj: '123456789012',
-      id_cidade: '1',
-      created_at: new Date(),
-      updated_at: null,
+      idCidade: '1',
+      createdAt: new Date(),
+      updatedAt: null,
     };
 
     jest.spyOn(service, 'findCompanyById').mockResolvedValueOnce(company);
@@ -85,15 +85,15 @@ describe('CompanyController', () => {
     };
 
     const result = {
-      razao_social: 'Company 1',
-      nome_fantasia: 'Company 1',
+      razaoSocial: 'Company 1',
+      nomeFantasia: 'Company 1',
       cnpj: '123456789012',
       cidade: 'City 1',
       uf: 'UF',
       id: '1',
-      id_cidade: '1',
-      created_at: new Date(),
-      updated_at: null,
+      idCidade: '1',
+      createdAt: new Date(),
+      updatedAt: null,
     };
 
     jest.spyOn(service, 'createCompany').mockResolvedValueOnce(result);
@@ -104,8 +104,8 @@ describe('CompanyController', () => {
   it('should call updateCompany method from service', async () => {
     const company = {
       id: '1',
-      razao_social: 'Company 1',
-      nome_fantasia: 'Company 1',
+      razaoSocial: 'Company 1',
+      nomeFantasia: 'Company 1',
       cnpj: '123456789012',
       cidade: 'City 1',
       uf: 'UF',
@@ -114,10 +114,10 @@ describe('CompanyController', () => {
 
     const result = {
       ...company,
-      razao_social: 'Company 2',
-      id_cidade: '2',
-      created_at: new Date(),
-      updated_at: new Date(),
+      razaoSocial: 'Company 2',
+      idCidade: '2',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     jest.spyOn(service, 'updateCompany').mockResolvedValueOnce(result);

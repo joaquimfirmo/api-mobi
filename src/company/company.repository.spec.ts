@@ -51,11 +51,13 @@ describe('CompanyRepository', () => {
 
   it('should call create method', async () => {
     await repository.create({
-      id: '1',
       razaoSocial: 'Razao Social',
       nomeFantasia: 'Nome Fantasia',
       cnpj: '123456789',
       idCidade: '1',
+      id: '1',
+      createdAt: '',
+      updatedAt: '',
     });
     expect(db.transaction().execute).toHaveBeenCalled();
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));

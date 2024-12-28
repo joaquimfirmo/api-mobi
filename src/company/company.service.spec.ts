@@ -64,6 +64,17 @@ describe('CompanyService', () => {
   });
 
   it('should call findAll method from repository', async () => {
+    jest.spyOn(repository, 'findAll').mockResolvedValue([
+      {
+        id: '1',
+        razao_social: 'Company 1',
+        nome_fantasia: 'Company 1',
+        cnpj: '12345678901234',
+        id_cidade: '1',
+        created_at: new Date(),
+        updated_at: null,
+      },
+    ]);
     await service.findAllCompanies();
     expect(repository.findAll).toHaveBeenCalled();
     expect(logger.log).toHaveBeenCalledWith('Buscando todas as empresas');
@@ -90,6 +101,28 @@ describe('CompanyService', () => {
     const mockUpdate = {
       nomeFantasia: 'Company 1',
     };
+
+    jest.spyOn(repository, 'findById').mockResolvedValue([
+      {
+        id: '1',
+        nome_fantasia: 'Company 1',
+        razao_social: 'Company 1',
+        cnpj: '12345678901234',
+        id_cidade: '1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ]);
+
+    jest.spyOn(repository, 'update').mockResolvedValueOnce({
+      id: '1',
+      nome_fantasia: 'Company 1',
+      razao_social: 'Company 1',
+      cnpj: '12345678901234',
+      id_cidade: '1',
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
     await service.updateCompany('1', mockUpdate);
     expect(repository.update).toHaveBeenCalledWith('1', mockUpdate);
     expect(logger.log).toHaveBeenCalledWith(
@@ -171,23 +204,28 @@ describe('CompanyService', () => {
       state: 'State 1',
     };
 
-    const mockCreateCompany = {
+    jest.spyOn(repository, 'create').mockResolvedValueOnce({
       id: '1',
-      razao_social: mockCompany.razaoSocial,
-      nome_fantasia: mockCompany.nomeFantasia,
-      cnpj: mockCompany.cnpj,
+      razao_social: 'Company 1',
+      nome_fantasia: 'Company 1',
+      cnpj: '12345678901234',
       id_cidade: '1',
       created_at: new Date(),
-    };
-
-    jest.spyOn(repository, 'create').mockResolvedValue(mockCreateCompany);
+      updated_at: null,
+    });
     jest.spyOn(service, 'verifyCnpjExists').mockResolvedValue(false);
     jest.spyOn(service, 'verifyRazaoSocialExists').mockResolvedValue(false);
     jest.spyOn(cityService, 'findOrCreateCity').mockResolvedValue(cityData);
 
-    const result = await service.createCompany(mockCompany);
-
-    expect(result).toEqual(mockCreateCompany);
+    expect(await service.createCompany(mockCompany)).toEqual({
+      id: '1',
+      razaoSocial: 'Company 1',
+      nomeFantasia: 'Company 1',
+      cnpj: '12345678901234',
+      idCidade: '1',
+      createdAt: expect.any(Date),
+      updatedAt: null,
+    });
   });
 
   it('should throw an exception if razao social exists', async () => {
