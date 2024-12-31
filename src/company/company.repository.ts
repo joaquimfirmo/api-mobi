@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
 import { Database } from 'src/common/database/types';
-import Company from './entities/company';
+import Company from './entities/company.entity';
 import { UpdateCompanyRequestDTO } from './dtos';
 
 @Injectable()

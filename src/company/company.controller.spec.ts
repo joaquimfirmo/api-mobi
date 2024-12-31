@@ -13,8 +13,8 @@ describe('CompanyController', () => {
         {
           provide: CompanyService,
           useValue: {
-            findAllCompanies: jest.fn(),
-            findCompanyById: jest.fn(),
+            findAll: jest.fn(),
+            findOne: jest.fn(),
             createCompany: jest.fn(),
             updateCompany: jest.fn(),
             deleteCompany: jest.fn(),
@@ -53,12 +53,12 @@ describe('CompanyController', () => {
       },
     ];
 
-    jest.spyOn(service, 'findAllCompanies').mockResolvedValueOnce(companies);
-    expect(await controller.getCompanies()).toBe(companies);
-    expect(service.findAllCompanies).toHaveBeenCalledTimes(1);
+    jest.spyOn(service, 'findAll').mockResolvedValueOnce(companies);
+    expect(await controller.findAll()).toBe(companies);
+    expect(service.findAll).toHaveBeenCalledTimes(1);
   });
 
-  it('should call findCompanyById method from service', async () => {
+  it('should call findOne method from service', async () => {
     const company = {
       id: '1',
       razaoSocial: 'Company 1',
@@ -69,9 +69,9 @@ describe('CompanyController', () => {
       updatedAt: null,
     };
 
-    jest.spyOn(service, 'findCompanyById').mockResolvedValueOnce(company);
-    expect(await controller.getCompany('1')).toEqual(company);
-    expect(service.findCompanyById).toHaveBeenCalledTimes(1);
+    jest.spyOn(service, 'findOne').mockResolvedValueOnce(company);
+    expect(await controller.findOne('1')).toEqual(company);
+    expect(service.findOne).toHaveBeenCalledTimes(1);
   });
 
   it('should call createCompany method from service', async () => {

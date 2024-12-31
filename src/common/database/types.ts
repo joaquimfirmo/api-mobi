@@ -3,6 +3,7 @@ import { ColumnType } from 'kysely';
 export interface Database {
   empresas: EmpresaTable;
   cidades: CidadeTable;
+  veiculos: VeiculoTable;
 }
 
 export interface EmpresaTable {
@@ -21,4 +22,11 @@ export interface CidadeTable {
   uf: string;
   cod_ibge: number;
   created_at: ColumnType<Date, string | undefined, never>;
+}
+
+export interface VeiculoTable {
+  id: ColumnType<string, string>;
+  nome: string;
+  created_at: ColumnType<Date, string | undefined, never>;
+  updated_at: ColumnType<Date, string | undefined, null>;
 }
