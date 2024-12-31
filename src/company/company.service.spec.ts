@@ -75,7 +75,7 @@ describe('CompanyService', () => {
         updated_at: null,
       },
     ]);
-    await service.findAllCompanies();
+    await service.findAll();
     expect(repository.findAll).toHaveBeenCalled();
     expect(logger.log).toHaveBeenCalledWith('Buscando todas as empresas');
   });
@@ -92,7 +92,7 @@ describe('CompanyService', () => {
         updated_at: null,
       },
     ]);
-    await service.findCompanyById('1');
+    await service.findOne('1');
     expect(repository.findById).toHaveBeenCalledWith('1');
     expect(logger.log).toHaveBeenCalledWith('Buscando empresa com o ID:1');
   });

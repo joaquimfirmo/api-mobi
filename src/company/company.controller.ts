@@ -9,7 +9,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import Company from './entities/company';
+import Company from './entities/company.entity';
 import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dtos';
 
 @Controller('empresas')
@@ -17,12 +17,12 @@ export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Get()
-  async getCompanies(): Promise<Company[]> {
-    return this.companyService.findAllCompanies();
+  async findAll(): Promise<Company[]> {
+    return this.companyService.findAll();
   }
 
   @Get('empresa/:id')
-  async getCompany(
+  async findOne(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -31,7 +31,7 @@ export class CompanyController {
     )
     id: string,
   ): Promise<Company> {
-    return this.companyService.findCompanyById(id);
+    return this.companyService.findOne(id);
   }
 
   @Post('empresa')

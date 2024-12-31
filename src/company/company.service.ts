@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CompanyRepository } from './company.repository';
 import { CityService } from '../city/city.service';
-import Company from './entities/company';
+import Company from './entities/company.entity';
 import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dtos';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class CompanyService {
     private readonly cityService: CityService,
   ) {}
 
-  async findAllCompanies(): Promise<Company[]> {
+  async findAll(): Promise<Company[]> {
     this.logger.log('Buscando todas as empresas');
     const result = await this.companyRepository.findAll();
     return result.map(
@@ -34,7 +34,7 @@ export class CompanyService {
     );
   }
 
-  async findCompanyById(id: string): Promise<Company> {
+  async findOne(id: string): Promise<Company> {
     this.logger.log(`Buscando empresa com o ID:${id}`);
 
     const result = await this.companyRepository.findById(id);
