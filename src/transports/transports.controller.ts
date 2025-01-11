@@ -17,11 +17,6 @@ import { UpdateTransportDto } from './dto/update-transport.dto';
 export class TransportsController {
   constructor(private readonly transportsService: TransportsService) {}
 
-  @Post('transporte')
-  create(@Body() createTransportDto: CreateTransportDto) {
-    return this.transportsService.create(createTransportDto);
-  }
-
   @Get()
   findAll() {
     return this.transportsService.findAll();
@@ -38,6 +33,24 @@ export class TransportsController {
     id: string,
   ): Promise<Transport> {
     return await this.transportsService.findOne(id);
+  }
+
+  @Get('cidade/:id')
+  async findByCityId(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        version: '4',
+      }),
+    )
+    id: string,
+  ): Promise<any> {
+    return await this.transportsService.findTransportsByCity(id);
+  }
+
+  @Post('transporte')
+  create(@Body() createTransportDto: CreateTransportDto) {
+    return this.transportsService.create(createTransportDto);
   }
 
   @Patch('transporte/:id')

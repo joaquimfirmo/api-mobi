@@ -14,23 +14,7 @@ export class TransportsRepository {
 
   async findAll() {
     try {
-      return await this.db
-        .selectFrom('transportes')
-        .innerJoin('veiculos', 'veiculos.id', 'transportes.id_veiculo')
-        .innerJoin('empresas', 'empresas.id', 'transportes.id_empresa')
-        .select([
-          'transportes.id',
-          'transportes.cidade_origem',
-          'transportes.cidade_destino',
-          'transportes.dia_semana',
-          'transportes.local_origem',
-          'transportes.horario_saida',
-          'transportes.horario_chegada',
-          'transportes.preco',
-          'veiculos.nome as veiculo',
-          'empresas.nome_fantasia as empresa',
-        ])
-        .execute();
+      return await this.db.selectFrom('transportes').selectAll().execute();
     } catch (error) {
       console.error(error);
       throw new BadRequestException({
@@ -52,6 +36,35 @@ export class TransportsRepository {
       console.error(error);
       throw new BadRequestException({
         message: 'Erro ao buscar transporte por id',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
+  async findByCityId(idCity: string) {
+    try {
+      return await this.db
+        .selectFrom('transportes')
+        .innerJoin('veiculos', 'veiculos.id', 'transportes.id_veiculo')
+        .innerJoin('empresas', 'empresas.id', 'transportes.id_empresa')
+        .where('transportes.id_cidade', '=', idCity)
+        .select([
+          'transportes.id',
+          'transportes.cidade_origem',
+          'transportes.cidade_destino',
+          'transportes.dia_semana',
+          'transportes.local_origem',
+          'transportes.horario_saida',
+          'transportes.horario_chegada',
+          'transportes.preco',
+          'veiculos.nome as veiculo',
+          'empresas.nome_fantasia as empresa',
+        ])
+        .execute();
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException({
+        message: 'Erro ao buscar transportes',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }

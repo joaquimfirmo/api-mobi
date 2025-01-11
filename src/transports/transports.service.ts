@@ -10,6 +10,72 @@ export class TransportsService {
     private readonly logger: Logger,
     private readonly transportsRepository: TransportsRepository,
   ) {}
+
+  async findAll(): Promise<Transport[]> {
+    this.logger.log('Buscando todos os transportes');
+    const transports = await this.transportsRepository.findAll();
+    if (transports.length === 0) {
+      throw new NotFoundException('Nenhum transporte foi encontrado');
+    }
+
+    return transports.map(
+      (transport) =>
+        new Transport(
+          transport.cidade_origem,
+          transport.cidade_destino,
+          transport.dia_semana,
+          transport.local_origem,
+          transport.horario_saida,
+          transport.horario_chegada,
+          transport.preco,
+          transport.id_empresa,
+          transport.id_veiculo,
+          transport.id_cidade,
+          transport.id,
+          transport.created_at,
+          transport.updated_at,
+        ),
+    );
+  }
+
+  async findOne(id: string): Promise<Transport> {
+    this.logger.log(`Buscando transporte com o ID:${id}`);
+    const result = await this.transportsRepository.findById(id);
+    if (result.length === 0) {
+      throw new NotFoundException(
+        `Transporte com o ID:${id} informado não foi encontrado`,
+      );
+    }
+    const [transport] = result;
+
+    return new Transport(
+      transport.cidade_origem,
+      transport.cidade_destino,
+      transport.local_origem,
+      transport.dia_semana,
+      transport.horario_saida,
+      transport.horario_chegada,
+      transport.preco,
+      transport.id_veiculo,
+      transport.id_empresa,
+      transport.id_cidade,
+      transport.id,
+      transport.created_at,
+      transport.updated_at,
+    );
+  }
+
+  async findTransportsByCity(cityId: string): Promise<any> {
+    this.logger.log(`Buscando transportes da ccityIdade com o ID:${cityId}`);
+    const transports = await this.transportsRepository.findByCityId(cityId);
+    if (transports.length === 0) {
+      throw new NotFoundException(
+        `Transportes da cidade com o ID:${cityId} informado não foram encontrados`,
+      );
+    }
+    return transports;
+  }
+
   async create(createTransportDto: CreateTransportDto): Promise<Transport> {
     this.logger.log(
       `Criando transporte: ${JSON.stringify(createTransportDto)}`,
@@ -28,54 +94,26 @@ export class TransportsService {
       createTransportDto.idCidade,
     );
     const result = await this.transportsRepository.create(transport);
-    this.logger.log(`Transporte criado: ${JSON.stringify(result)}`);
+
+    const [createdTransport] = result;
+    this.logger.log(`Transporte criado: ${JSON.stringify(createdTransport)}`);
 
     return new Transport(
-      result[0].cidade_origem,
-      result[0].cidade_destino,
-      result[0].local_origem,
-      result[0].dia_semana,
-      result[0].horario_saida,
-      result[0].horario_chegada,
-      result[0].preco,
-      result[0].id_veiculo,
-      result[0].id_empresa,
-      result[0].id_cidade,
-      result[0].id,
-      result[0].created_at,
-      result[0].updated_at,
+      createdTransport.cidade_origem,
+      createdTransport.cidade_destino,
+      createdTransport.local_origem,
+      createdTransport.dia_semana,
+      createdTransport.horario_saida,
+      createdTransport.horario_chegada,
+      createdTransport.preco,
+      createdTransport.id_veiculo,
+      createdTransport.id_empresa,
+      createdTransport.id_cidade,
+      createdTransport.id,
+      createdTransport.created_at,
+      createdTransport.updated_at,
     );
   }
-
-  findAll(): Promise<any> {
-    return this.transportsRepository.findAll();
-  }
-
-  async findOne(id: string): Promise<Transport> {
-    this.logger.log(`Buscando transporte com o ID:${id}`);
-    const result = await this.transportsRepository.findById(id);
-    if (result.length === 0) {
-      throw new NotFoundException(
-        `Transporte com o ID:${id} informado não foi encontrado`,
-      );
-    }
-    return new Transport(
-      result[0].cidade_origem,
-      result[0].cidade_destino,
-      result[0].local_origem,
-      result[0].dia_semana,
-      result[0].horario_saida,
-      result[0].horario_chegada,
-      result[0].preco,
-      result[0].id_veiculo,
-      result[0].id_empresa,
-      result[0].id_cidade,
-      result[0].id,
-      result[0].created_at,
-      result[0].updated_at,
-    );
-  }
-
   async update(
     id: string,
     updateTransportDto: UpdateTransportDto,
@@ -108,22 +146,26 @@ export class TransportsService {
 
     const result = await this.transportsRepository.update(id, transport);
 
-    this.logger.log(`Transporte atualizado: ${JSON.stringify(result)}`);
+    const [updatedTransport] = result;
+
+    this.logger.log(
+      `Transporte atualizado: ${JSON.stringify(updatedTransport)}`,
+    );
 
     return new Transport(
-      result[0].cidade_origem,
-      result[0].cidade_destino,
-      result[0].local_origem,
-      result[0].dia_semana,
-      result[0].horario_saida,
-      result[0].horario_chegada,
-      result[0].preco,
-      result[0].id_veiculo,
-      result[0].id_empresa,
-      result[0].id_cidade,
-      result[0].id,
-      result[0].created_at,
-      result[0].updated_at,
+      updatedTransport.cidade_origem,
+      updatedTransport.cidade_destino,
+      updatedTransport.local_origem,
+      updatedTransport.dia_semana,
+      updatedTransport.horario_saida,
+      updatedTransport.horario_chegada,
+      updatedTransport.preco,
+      updatedTransport.id_veiculo,
+      updatedTransport.id_empresa,
+      updatedTransport.id_cidade,
+      updatedTransport.id,
+      updatedTransport.created_at,
+      updatedTransport.updated_at,
     );
   }
 
