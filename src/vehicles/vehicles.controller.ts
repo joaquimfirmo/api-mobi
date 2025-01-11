@@ -11,11 +11,11 @@ import { VehiclesService } from './vehicles.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
-@Controller('vehicles')
+@Controller('veiculos')
 export class VehiclesController {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
-  @Post('vehicle')
+  @Post('veiculo')
   create(@Body() createVehicleDto: CreateVehicleDto) {
     return this.vehiclesService.create(createVehicleDto);
   }
@@ -25,17 +25,17 @@ export class VehiclesController {
     return this.vehiclesService.findAll();
   }
 
-  @Get('vehicle:id')
+  @Get('veiculo/:id')
   findOne(@Param('id') id: string) {
     return this.vehiclesService.findOne(id);
   }
 
-  @Patch('vehicle/:id')
+  @Patch('veiculo/:id')
   update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
     return this.vehiclesService.update(id, updateVehicleDto);
   }
 
-  @Delete('vehicle/:id')
+  @Delete('veiculo/:id')
   remove(@Param('id') id: string) {
     return this.vehiclesService.remove(id);
   }
