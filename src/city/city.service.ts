@@ -12,12 +12,10 @@ export class CityService {
   ) {}
 
   async findAllCities(): Promise<any> {
-    this.logger.log('Buscando todas as cidades');
     return this.cityRepository.findAll();
   }
 
   async getCityById(id: string): Promise<any> {
-    this.logger.log(`Buscando cidade com o ID:${id}`);
     return this.cityRepository.findById(id);
   }
 
