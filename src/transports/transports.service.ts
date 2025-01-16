@@ -12,7 +12,6 @@ export class TransportsService {
   ) {}
 
   async findAll(): Promise<Transport[]> {
-    this.logger.log('Buscando todos os transportes');
     const transports = await this.transportsRepository.findAll();
     if (transports.length === 0) {
       throw new NotFoundException('Nenhum transporte foi encontrado');
@@ -39,7 +38,6 @@ export class TransportsService {
   }
 
   async findOne(id: string): Promise<Transport> {
-    this.logger.log(`Buscando transporte com o ID:${id}`);
     const result = await this.transportsRepository.findById(id);
     if (result.length === 0) {
       throw new NotFoundException(
@@ -66,7 +64,6 @@ export class TransportsService {
   }
 
   async findTransportsByCity(cityId: string): Promise<any> {
-    this.logger.log(`Buscando transportes da ccityIdade com o ID:${cityId}`);
     const transports = await this.transportsRepository.findByCityId(cityId);
     if (transports.length === 0) {
       throw new NotFoundException(
