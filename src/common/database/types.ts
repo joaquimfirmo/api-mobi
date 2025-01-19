@@ -5,6 +5,7 @@ export interface Database {
   cidades: CidadeTable;
   veiculos: VeiculoTable;
   transportes: TransporteTable;
+  usuarios: UsuarioTable;
 }
 
 export interface EmpresaTable {
@@ -46,4 +47,16 @@ export interface TransporteTable {
   id_cidade: string;
   created_at?: ColumnType<Date, string | undefined, never>;
   updated_at?: ColumnType<Date, string | undefined, null>;
+}
+
+export type Permissoes = 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'GUEST';
+
+export interface UsuarioTable {
+  id: ColumnType<string, string>;
+  nome: string;
+  email: string;
+  senha: string;
+  permissoes: Permissoes;
+  created_at: ColumnType<Date, string | undefined, never>;
+  updated_at: ColumnType<Date, string | undefined, null>;
 }
