@@ -41,9 +41,36 @@ export class TransportsRepository {
     }
   }
 
-  async findByCityId(idCity: string) {
+  generateWhereClause = (day, hour, city_destination) => {
+    const conditions = [];
+
+    if (day) {
+      conditions.push(sql`dia_semana = ${day}`);
+    }
+    if (hour) {
+      conditions.push(sql`horario_saida = ${hour}`);
+    }
+    if (city_destination) {
+      conditions.push(sql`cidade_destino = ${city_destination}`);
+    }
+
+    return conditions.length > 0 ? sql.join(conditions, sql` AND `) : null;
+  };
+
+  async findByCityId(
+    idCity: string,
+    page: number = 0,
+    limit: number = 20,
+    filters: any,
+  ) {
+    const { day, hour, city_destination } = filters;
+
+    const where = this.generateWhereClause(day, hour, city_destination);
+
     try {
-      return await this.db
+      let query: any;
+
+      query = this.db
         .selectFrom('transportes')
         .innerJoin('veiculos', 'veiculos.id', 'transportes.id_veiculo')
         .innerJoin('empresas', 'empresas.id', 'transportes.id_empresa')
@@ -60,7 +87,18 @@ export class TransportsRepository {
           'veiculos.nome as veiculo',
           'empresas.nome_fantasia as empresa',
         ])
-        .execute();
+        .limit(limit)
+        .offset(page * limit);
+
+      if (where) {
+        query = query.where(where);
+      }
+
+      query.compile();
+
+      const { rows } = await this.db.executeQuery(query);
+
+      return rows;
     } catch (error) {
       console.error(error);
       throw new BadRequestException({

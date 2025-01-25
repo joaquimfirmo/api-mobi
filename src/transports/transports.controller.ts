@@ -5,9 +5,11 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   Delete,
   ParseUUIDPipe,
 } from '@nestjs/common';
+
 import { Transport } from './entities/transport.entity';
 import { TransportsService } from './transports.service';
 import { CreateTransportDto } from './dto/create-transport.dto';
@@ -44,8 +46,18 @@ export class TransportsController {
       }),
     )
     id: string,
+
+    @Query() query,
   ): Promise<any> {
-    return await this.transportsService.findTransportsByCity(id);
+    const { page, limit, day, hour, city_destination } = query;
+
+    return await this.transportsService.findTransportsByCity(id, {
+      page,
+      limit,
+      day,
+      hour,
+      city_destination,
+    });
   }
 
   @Post('transporte')

@@ -63,11 +63,17 @@ export class TransportsService {
     );
   }
 
-  async findTransportsByCity(cityId: string): Promise<any> {
-    const transports = await this.transportsRepository.findByCityId(cityId);
+  async findTransportsByCity(cityId: string, query): Promise<any> {
+    const { page, limit, day, hour, city_destination } = query;
+    const transports = await this.transportsRepository.findByCityId(
+      cityId,
+      page,
+      limit,
+      { day, hour, city_destination },
+    );
     if (transports.length === 0) {
       throw new NotFoundException(
-        `Transportes da cidade com o ID:${cityId} informado não foram encontrados`,
+        `Nenhum transporte foi encontrado para a cidade com o ID:${cityId}`,
       );
     }
     return transports;
