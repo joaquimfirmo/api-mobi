@@ -53,13 +53,11 @@ describe('CityService', () => {
   it('should call findAllCities method from repository', async () => {
     await service.findAllCities();
     expect(repository.findAll).toHaveBeenCalled();
-    expect(logger.log).toHaveBeenCalledWith('Buscando todas as cidades');
   });
 
   it('should call getCityById method from repository', async () => {
     await service.getCityById('1');
     expect(repository.findById).toHaveBeenCalled();
-    expect(logger.log).toHaveBeenCalledWith('Buscando cidade com o ID:1');
   });
 
   it('should call isValidCity method from ibgeClient', async () => {

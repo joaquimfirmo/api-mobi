@@ -18,7 +18,6 @@ export class CompanyService {
   ) {}
 
   async findAll(): Promise<Company[]> {
-    this.logger.log('Buscando todas as empresas');
     const result = await this.companyRepository.findAll();
     return result.map(
       (company) =>
@@ -35,8 +34,6 @@ export class CompanyService {
   }
 
   async findOne(id: string): Promise<Company> {
-    this.logger.log(`Buscando empresa com o ID:${id}`);
-
     const result = await this.companyRepository.findById(id);
 
     if (result.length === 0) {
@@ -123,7 +120,9 @@ export class CompanyService {
       );
     }
 
-    this.logger.log(`Empresa para ser atualizada ${JSON.stringify(company)}`);
+    this.logger.log(
+      `Dados para atualização da empresa: ${JSON.stringify(company)}`,
+    );
 
     const updatedCompany = await this.companyRepository.update(id, company);
 

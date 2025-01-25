@@ -77,7 +77,6 @@ describe('CompanyService', () => {
     ]);
     await service.findAll();
     expect(repository.findAll).toHaveBeenCalled();
-    expect(logger.log).toHaveBeenCalledWith('Buscando todas as empresas');
   });
 
   it('should call findById method from repository and log method from logger when findCompanyById is called', async () => {
@@ -94,7 +93,6 @@ describe('CompanyService', () => {
     ]);
     await service.findOne('1');
     expect(repository.findById).toHaveBeenCalledWith('1');
-    expect(logger.log).toHaveBeenCalledWith('Buscando empresa com o ID:1');
   });
 
   it('should call update method from repository and log method from logger when updateCompany is called', async () => {
@@ -126,7 +124,7 @@ describe('CompanyService', () => {
     await service.updateCompany('1', mockUpdate);
     expect(repository.update).toHaveBeenCalledWith('1', mockUpdate);
     expect(logger.log).toHaveBeenCalledWith(
-      `Empresa para ser atualizada ${JSON.stringify(mockUpdate)}`,
+      `Dados para atualização da empresa: ${JSON.stringify(mockUpdate)}`,
     );
   });
 

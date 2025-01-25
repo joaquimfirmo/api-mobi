@@ -26,12 +26,10 @@ export class VehiclesService {
   }
 
   findAll(): Promise<Vehicle[]> {
-    this.logger.log('Buscando todos os veículos');
     return this.vehicleRepository.findAll();
   }
 
   async findOne(id: string): Promise<Vehicle> {
-    this.logger.log(`Buscando veículo com id: ${id}`);
     const result = await this.vehicleRepository.findById(id);
     if (result.length === 0) {
       throw new NotFoundException(

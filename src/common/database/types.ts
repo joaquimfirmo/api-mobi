@@ -4,6 +4,8 @@ export interface Database {
   empresas: EmpresaTable;
   cidades: CidadeTable;
   veiculos: VeiculoTable;
+  transportes: TransporteTable;
+  usuarios: UsuarioTable;
 }
 
 export interface EmpresaTable {
@@ -27,6 +29,34 @@ export interface CidadeTable {
 export interface VeiculoTable {
   id: ColumnType<string, string>;
   nome: string;
+  created_at: ColumnType<Date, string | undefined, never>;
+  updated_at: ColumnType<Date, string | undefined, null>;
+}
+
+export interface TransporteTable {
+  id: ColumnType<string, string>;
+  cidade_origem: string;
+  cidade_destino: string;
+  local_origem: string;
+  dia_semana: string;
+  horario_saida: string;
+  horario_chegada: string;
+  preco: number;
+  id_veiculo: string;
+  id_empresa: string;
+  id_cidade: string;
+  created_at?: ColumnType<Date, string | undefined, never>;
+  updated_at?: ColumnType<Date, string | undefined, null>;
+}
+
+export type Permissoes = 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'GUEST';
+
+export interface UsuarioTable {
+  id: ColumnType<string, string>;
+  nome: string;
+  email: string;
+  senha: string;
+  permissoes: Permissoes;
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, null>;
 }
