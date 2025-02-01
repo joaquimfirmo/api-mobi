@@ -7,6 +7,7 @@ import {
 import { Kysely, sql } from 'kysely';
 import { Database } from 'src/common/database/types';
 import { Transport } from './entities/transport.entity';
+import { UpdateTransportDto } from './dto/update-transport.dto';
 
 @Injectable()
 export class TransportsRepository {
@@ -152,7 +153,7 @@ export class TransportsRepository {
     }
   }
 
-  async update(id: string, transport: Transport) {
+  async update(id: string, transport: UpdateTransportDto) {
     try {
       return await this.db.transaction().execute(async (trx) => {
         return await trx
