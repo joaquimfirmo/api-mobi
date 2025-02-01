@@ -76,7 +76,7 @@ export class TransportsService {
         `Nenhum transporte foi encontrado para a cidade com o ID:${cityId}`,
       );
     }
-    console.log(transports);
+
     return transports;
   }
 
