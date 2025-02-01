@@ -22,8 +22,8 @@ export class TransportsService {
         new Transport(
           transport.cidade_origem,
           transport.cidade_destino,
-          transport.dia_semana,
           transport.local_origem,
+          transport.dia_semana,
           transport.horario_saida,
           transport.horario_chegada,
           transport.preco,
@@ -76,6 +76,7 @@ export class TransportsService {
         `Nenhum transporte foi encontrado para a cidade com o ID:${cityId}`,
       );
     }
+    console.log(transports);
     return transports;
   }
 
