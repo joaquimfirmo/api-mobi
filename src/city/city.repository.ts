@@ -29,7 +29,7 @@ export class CityRepository {
           id: city.id,
           nome: city.nome,
           uf: city.uf,
-          cod_ibge: city.cod_ibge,
+          codigo_ibge: city.cod_ibge,
         })
         .returning(['id', 'nome', 'uf'])
         .executeTakeFirstOrThrow();
@@ -41,7 +41,7 @@ export class CityRepository {
       .selectFrom('cidades')
       .selectAll()
       .where('nome', '=', name)
-      .where('cod_ibge', '=', code)
+      .where('codigo_ibge', '=', code)
       .limit(1)
       .execute();
   }

@@ -68,7 +68,7 @@ describe('CityRepository', () => {
       'Nome',
     );
     expect(db.selectFrom('cidades').selectAll().where).toHaveBeenCalledWith(
-      'cod_ibge',
+      'codigo_ibge',
       '=',
       1,
     );
