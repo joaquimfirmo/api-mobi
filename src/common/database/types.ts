@@ -81,7 +81,7 @@ export interface VeiculoTable {
   updated_at: ColumnType<Date, string | undefined, null>;
 }
 
-type Permissoes = 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'GUEST';
+export type Permissoes = 'SUPER_ADMIN' | 'ADMIN' | 'USER' | 'GUEST';
 
 export interface UsuarioTable {
   id: ColumnType<string, string>;
