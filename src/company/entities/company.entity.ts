@@ -5,7 +5,7 @@ export default class Company {
   public readonly razaoSocial: string;
   public readonly nomeFantasia: string;
   public readonly cnpj: string;
-  public readonly idCidade: string;
+  public readonly email: string;
   public readonly createdAt: Date | string | null;
   public readonly updatedAt: Date | string | null;
 
@@ -13,7 +13,7 @@ export default class Company {
     razaoSocial: string,
     nomeFantasia: string,
     cnpj: string,
-    idCidade: string,
+    email: string,
     id?: string,
     createdAt?: Date,
     updatedAt?: Date,
@@ -22,7 +22,7 @@ export default class Company {
     this.razaoSocial = razaoSocial;
     this.nomeFantasia = nomeFantasia;
     this.cnpj = cnpj;
-    this.idCidade = idCidade;
+    this.email = email;
     this.createdAt = createdAt || null;
     this.updatedAt = updatedAt || null;
   }

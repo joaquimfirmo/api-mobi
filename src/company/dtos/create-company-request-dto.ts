@@ -3,10 +3,9 @@ import {
   MinLength,
   MaxLength,
   Length,
-  IsInt,
   IsNumberString,
   IsNotEmpty,
-  IsOptional,
+  IsEmail,
 } from 'class-validator';
 
 export default class CreateCompanyRequestDTO {
@@ -48,38 +47,8 @@ export default class CreateCompanyRequestDTO {
   cnpj: string;
 
   @IsNotEmpty({
-    message: 'Cidade é obrigatória',
+    message: 'Email é obrigatório',
   })
-  @IsString({
-    message: 'Nome da cidade deve ser uma string',
-  })
-  @MinLength(2, {
-    message: 'Nome da cidade deve ter no mínimo 2 caracteres',
-  })
-  cidade: string;
-
-  @IsNotEmpty({
-    message: 'UF é obrigatório',
-  })
-  @IsString({
-    message: 'UF deve ser uma string',
-  })
-  @MinLength(2, {
-    message: 'UF deve ter no mínimo 2 caracteres',
-  })
-  @MaxLength(2, {
-    message: 'UF deve ter no máximo 2 caracteres',
-  })
-  uf: string;
-
-  @IsNotEmpty({
-    message: 'Código da cidade é obrigatório',
-  })
-  @IsInt({
-    message: 'Código da cidade deve ser um número inteiro',
-  })
-  codigoCidade: number;
-
-  @IsOptional()
-  idCidade?: string | null;
+  @IsEmail({}, { message: 'Email inválido' })
+  email: string;
 }

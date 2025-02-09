@@ -38,7 +38,7 @@ describe('CompanyController', () => {
         razaoSocial: 'Company 1',
         nomeFantasia: 'Company 1',
         cnpj: '123456789012',
-        idCidade: '1',
+        email: 'example@email.com',
         createdAt: new Date(),
         updatedAt: null,
       },
@@ -47,7 +47,7 @@ describe('CompanyController', () => {
         razaoSocial: 'Company 2',
         nomeFantasia: 'Company 2',
         cnpj: '123456789013',
-        idCidade: '2',
+        email: 'example@email.com',
         createdAt: new Date(),
         updatedAt: null,
       },
@@ -64,7 +64,7 @@ describe('CompanyController', () => {
       razaoSocial: 'Company 1',
       nomeFantasia: 'Company 1',
       cnpj: '123456789012',
-      idCidade: '1',
+      email: 'example@email.com',
       createdAt: new Date(),
       updatedAt: null,
     };
@@ -79,19 +79,15 @@ describe('CompanyController', () => {
       razaoSocial: 'Company 1',
       nomeFantasia: 'Company 1',
       cnpj: '123456789012',
-      cidade: 'City 1',
-      uf: 'UF',
-      codigoCidade: 1222,
+      email: 'example@gmail.com',
     };
 
     const result = {
       razaoSocial: 'Company 1',
       nomeFantasia: 'Company 1',
       cnpj: '123456789012',
-      cidade: 'City 1',
-      uf: 'UF',
+      email: 'example@email.com',
       id: '1',
-      idCidade: '1',
       createdAt: new Date(),
       updatedAt: null,
     };
@@ -107,15 +103,13 @@ describe('CompanyController', () => {
       razaoSocial: 'Company 1',
       nomeFantasia: 'Company 1',
       cnpj: '123456789012',
-      cidade: 'City 1',
-      uf: 'UF',
-      codigo_cidade: 1222,
+      email: 'example@email.com',
     };
 
     const result = {
       ...company,
       razaoSocial: 'Company 2',
-      idCidade: '2',
+      email: 'example@email.com',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -131,7 +125,7 @@ describe('CompanyController', () => {
       razao_social: 'Company 1',
       nome_fantasia: 'Company 1',
       cnpj: '123456789012',
-      id_cidade: '1',
+      email: 'example@email.com',
       created_at: new Date(),
       updated_at: null,
     };

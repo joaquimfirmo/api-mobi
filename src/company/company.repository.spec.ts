@@ -54,7 +54,7 @@ describe('CompanyRepository', () => {
       razaoSocial: 'Razao Social',
       nomeFantasia: 'Nome Fantasia',
       cnpj: '123456789',
-      idCidade: '1',
+      email: 'example@email.com',
       id: '1',
       createdAt: '',
       updatedAt: '',
@@ -68,7 +68,7 @@ describe('CompanyRepository', () => {
       razaoSocial: 'Razao Social',
       nomeFantasia: 'Nome Fantasia',
       cnpj: '123456789',
-      idCidade: '1',
+      email: 'example@email.com',
     });
     expect(db.transaction().execute).toHaveBeenCalled();
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
