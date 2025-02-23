@@ -65,52 +65,6 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
-## Descrição dos Módulos
-
-### Usuários
-
-- **Controller**: users.controller.ts
-- **Service**: users.service.ts
-- **Repository**: users.repository.ts
-- **DTOs**: dto
-- **Entidade**: user.entity.ts
-
-### Empresas
-
-- **Controller**: company.controller.ts
-- **Service**: company.service.ts
-- **Repository**: company.repository.ts
-- **DTOs**: dtos
-- **Entidade**: company.entity.ts
-
-### Veículos
-
-- **Controller**: vehicles.controller.ts
-- **Service**: vehicles.service.ts
-- **Repository**: vehicles.repository.ts
-- **DTOs**: dto
-- **Entidade**: vehicle.entity.ts
-
-### Transportes
-
-- **Controller**: transports.controller.ts
-- **Service**: transports.service.ts
-- **Repository**: transports.repository.ts
-- **DTOs**: dto
-- **Entidade**: transport.entity.ts
-
-### Cidades
-
-- **Controller**: `src/city/city.controller.ts`
-- **Service**: city.service.ts
-- **Repository**: city.repository.ts
-- **Entidade**: city.ts
-
-### Comum
-
-- **Database Module**: database.module.ts
-- **Database Types**: types.ts
-
 ## Configuração do Banco de Dados
 
 A conexão com o banco de dados é configurada no arquivo database.providers.ts. Certifique-se de definir as variáveis de ambiente no arquivo .env:
@@ -146,11 +100,6 @@ bootstrap();
 
 Este projeto é licenciado sob a licença MIT. Veja o arquivo [LICENSE](https://github.com/nestjs/nest/blob/master/LICENSE) para mais detalhes.
 ```
-
-Este README atualizado inclui informações sobre o propósito do projeto, a estrutura do projeto, instruções de instalação e execução, detalhes dos módulos principais, configuração do banco de dados, e a inicialização da aplicação.
-Este README atualizado inclui informações sobre o propósito do projeto, a estrutura do projeto, instruções de instalação e execução, detalhes dos módulos principais, configuração do banco de dados, e a inicialização da aplicação.
-
-Similar code found with 1 license type
 
 ## Instalação
 
