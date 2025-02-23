@@ -1,6 +1,6 @@
 # API Mobi
 
-API Mobi é uma aplicação server-side construída com o framework [NestJS](https://nestjs.com/). Esta API gerencia informações sobre meios de transportes disponíveis entre cidades, incluindo rotas, horários, preços, veículos e empresas de transportes que operam entre cidades de uma região.
+API Mobi é uma aplicação server-side construída com o framework [NestJS](https://nestjs.com/). Esta API gerencia informações sobre meios de transportes disponíveis entre cidades, incluindo rotas, horários, preços, veículos e empresas de transportes que operam entre cidades de uma determinada região.
 
 ## Estrutura do Projeto
 
