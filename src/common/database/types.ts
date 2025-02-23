@@ -35,6 +35,7 @@ export interface CidadeTable {
   uf: string;
   codigo_ibge: number;
   created_at: ColumnType<Date, string | undefined, never>;
+  updated_at: ColumnType<Date, string | undefined, null>;
 }
 
 export interface HorariosTable {

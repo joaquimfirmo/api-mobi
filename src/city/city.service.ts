@@ -1,7 +1,7 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { IbgeClient } from '../gateway/ibge/ibge.client';
 import { CityRepository } from './city.repository';
-import City from './entities/city';
+import { City } from './entities/city';
 
 @Injectable()
 export class CityService {
@@ -11,11 +11,11 @@ export class CityService {
     private readonly ibgeClient: IbgeClient,
   ) {}
 
-  async findAllCities(): Promise<any> {
-    return this.cityRepository.findAll();
+  async findAllCities(): Promise<City[]> {
+    return await this.cityRepository.findAll();
   }
 
-  async getCityById(id: string): Promise<any> {
+  async getCityById(id: string): Promise<City | null> {
     return this.cityRepository.findById(id);
   }
 
@@ -38,7 +38,7 @@ export class CityService {
     if (!cityIsValid) {
       throw new BadRequestException('Cidade inválida');
     }
-    const cityData = City.create({ nome: name, uf, cod_ibge: code });
+    const cityData = City.create({ nome: name, uf, codigoIbge: code });
     return await this.cityRepository.create(cityData);
   }
 }
