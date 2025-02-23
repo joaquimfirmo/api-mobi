@@ -1,85 +1,160 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API Mobi
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API Mobi é uma aplicação server-side construída com o framework [NestJS](https://nestjs.com/). Esta API gerencia informações sobre meios de transportes disponíveis entre cidades, incluindo rotas, horários, preços, veículos e empresas de transportes que operam entre cidades de uma região.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Estrutura do Projeto
 
-## Description
+```
+.env
+.eslintrc.js
+.gitignore
+.prettierrc
+coverage/
+nest-cli.json
+package.json
+README.md
+src/
+  app.controller.spec.ts
+  app.controller.ts
+  app.module.ts
+  app.service.ts
+  city/
+  common/
+  company/
+  gateway/
+  main.ts
+  transports/
+  users/
+  vehicles/
+test/
+tsconfig.build.json
+tsconfig.json
+```
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Instalação
 
-## Project setup
+Certifique-se de ter o [Node.js](https://nodejs.org/) versão 20 instalada.
 
 ```bash
 $ yarn install
 ```
 
-## Compile and run the project
+## Executando a Aplicação
 
 ```bash
-# development
+# desenvolvimento
 $ yarn run start
 
-# watch mode
+# modo watch
 $ yarn run start:dev
 
-# production mode
+# produção
 $ yarn run start:prod
 ```
 
-## Run tests
+## Testes
 
 ```bash
-# unit tests
+# testes unitários
 $ yarn run test
 
-# e2e tests
+# testes end-to-end
 $ yarn run test:e2e
 
-# test coverage
+# cobertura de testes
 $ yarn run test:cov
 ```
 
-## Resources
+## Descrição dos Módulos
 
-Check out a few resources that may come in handy when working with NestJS:
+### Usuários
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- **Controller**: users.controller.ts
+- **Service**: users.service.ts
+- **Repository**: users.repository.ts
+- **DTOs**: dto
+- **Entidade**: user.entity.ts
 
-## Support
+### Empresas
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **Controller**: company.controller.ts
+- **Service**: company.service.ts
+- **Repository**: company.repository.ts
+- **DTOs**: dtos
+- **Entidade**: company.entity.ts
 
-## Stay in touch
+### Veículos
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Controller**: vehicles.controller.ts
+- **Service**: vehicles.service.ts
+- **Repository**: vehicles.repository.ts
+- **DTOs**: dto
+- **Entidade**: vehicle.entity.ts
 
-## License
+### Transportes
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **Controller**: transports.controller.ts
+- **Service**: transports.service.ts
+- **Repository**: transports.repository.ts
+- **DTOs**: dto
+- **Entidade**: transport.entity.ts
+
+### Cidades
+
+- **Controller**: `src/city/city.controller.ts`
+- **Service**: city.service.ts
+- **Repository**: city.repository.ts
+- **Entidade**: city.ts
+
+### Comum
+
+- **Database Module**: database.module.ts
+- **Database Types**: types.ts
+
+## Configuração do Banco de Dados
+
+A conexão com o banco de dados é configurada no arquivo database.providers.ts. Certifique-se de definir as variáveis de ambiente no arquivo .env:
+
+```
+BD_USER=<seu_usuario>
+BD_HOST=<seu_host>
+BD_DATABASE=<seu_banco_de_dados>
+BD_PASSWORD=<sua_senha>
+BD_PORT=<sua_porta>
+```
+
+Este projeto utiliza o banco de dados PostgreSQL e o query builder Kysely.
+
+## Inicialização da Aplicação
+
+O ponto de entrada da aplicação é o arquivo main.ts, que configura o NestJS e inicia o servidor na porta 8080:
+
+```typescript
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(8080);
+}
+bootstrap();
+```
+
+## Licença
+
+Este projeto é licenciado sob a licença MIT. Veja o arquivo [LICENSE](https://github.com/nestjs/nest/blob/master/LICENSE) para mais detalhes.
+```
+
+Este README atualizado inclui informações sobre o propósito do projeto, a estrutura do projeto, instruções de instalação e execução, detalhes dos módulos principais, configuração do banco de dados, e a inicialização da aplicação.
+Este README atualizado inclui informações sobre o propósito do projeto, a estrutura do projeto, instruções de instalação e execução, detalhes dos módulos principais, configuração do banco de dados, e a inicialização da aplicação.
+
+Similar code found with 1 license type
+
+## Instalação
+
+Certifique-se de ter o [Node.js](https://nodejs.org/) versão 20 instalada.
+
+```bash
+$ yarn install
