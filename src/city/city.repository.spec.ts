@@ -19,7 +19,7 @@ describe('CityRepository', () => {
             where: jest.fn().mockReturnThis(),
             limit: jest.fn().mockReturnThis(),
             transaction: jest.fn().mockReturnThis(),
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue([]),
           },
         },
       ],
@@ -54,7 +54,9 @@ describe('CityRepository', () => {
       id: '1',
       nome: 'Nome',
       uf: 'UF',
-      cod_ibge: 1,
+      codigoIbge: 1,
+      createdAt: new Date(),
+      updatedAt: null,
     });
     expect(db.transaction().execute).toHaveBeenCalled();
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
