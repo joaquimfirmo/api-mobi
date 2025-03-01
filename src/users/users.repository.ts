@@ -138,4 +138,20 @@ export class UsersRepository {
       });
     }
   }
+
+  async findByEmail(email: string) {
+    try {
+      return await this.db
+        .selectFrom('usuarios')
+        .where('email', '=', email)
+        .limit(1)
+        .execute();
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException({
+        message: 'Erro ao buscar usuário por email',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 }
