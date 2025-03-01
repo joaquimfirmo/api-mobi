@@ -45,12 +45,28 @@ export class VehiclesService {
     );
   }
 
-  update(id: string, updateVehicleDto: UpdateVehicleDto): Promise<Vehicle> {
+  async update(
+    id: string,
+    updateVehicleDto: UpdateVehicleDto,
+  ): Promise<Vehicle> {
+    const vehicleExists = await this.vehicleRepository.findById(id);
+    if (vehicleExists.length === 0) {
+      throw new NotFoundException(
+        `Veículo com o ID:${id} informado não foi encontrado`,
+      );
+    }
     this.logger.log(`Atualizando veículo com id: ${id}`);
     return this.vehicleRepository.update(id, updateVehicleDto);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
+    const vehicleExists = await this.vehicleRepository.findById(id);
+    if (vehicleExists.length === 0) {
+      throw new NotFoundException(
+        `Veículo com o ID:${id} informado não foi encontrado`,
+      );
+    }
+
     this.logger.log(`Removendo veículo com id: ${id}`);
     return this.vehicleRepository.delete(id);
   }
