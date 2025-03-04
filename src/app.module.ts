@@ -6,7 +6,7 @@ import { CompanyModule } from './company/company.module';
 import { DatabaseModule } from './common/database/database.module';
 import { CityModule } from './city/city.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
-import { TransportsModule } from './transports/transports.module';
+import { RoutesModule } from './route/routes.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -16,7 +16,7 @@ import { UsersModule } from './users/users.module';
     DatabaseModule,
     CityModule,
     VehiclesModule,
-    TransportsModule,
+    RoutesModule,
     UsersModule,
   ],
   controllers: [AppController],

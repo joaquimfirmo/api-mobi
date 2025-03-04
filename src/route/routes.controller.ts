@@ -10,14 +10,14 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 
-import { Transport } from './entities/transport.entity';
-import { TransportsService } from './transports.service';
-import { CreateTransportDto } from './dto/create-transport.dto';
-import { UpdateTransportDto } from './dto/update-transport.dto';
+import { Route } from './entities/route.entity';
+import { RoutesService } from './routes.service';
+import { CreateRouteDTO } from './dto/create-route.dto';
+import { UpdateRouteDTO } from './dto/update-route.dto';
 
 @Controller('transportes')
-export class TransportsController {
-  constructor(private readonly transportsService: TransportsService) {}
+export class RoutesController {
+  constructor(private readonly transportsService: RoutesService) {}
 
   @Get()
   findAll() {
@@ -33,7 +33,7 @@ export class TransportsController {
       }),
     )
     id: string,
-  ): Promise<Transport> {
+  ): Promise<Route> {
     return await this.transportsService.findOne(id);
   }
 
@@ -61,7 +61,7 @@ export class TransportsController {
   }
 
   @Post('transporte')
-  create(@Body() createTransportDto: CreateTransportDto) {
+  create(@Body() createTransportDto: CreateRouteDTO) {
     return this.transportsService.create(createTransportDto);
   }
 
@@ -74,7 +74,7 @@ export class TransportsController {
       }),
     )
     id: string,
-    @Body() payload: UpdateTransportDto,
+    @Body() payload: UpdateRouteDTO,
   ) {
     return this.transportsService.update(id, payload);
   }

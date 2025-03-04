@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TransportsRepository } from './transports.repository';
+import { RoutesRepository } from './routes.repository';
 import { Kysely } from 'kysely';
 import { Database } from 'src/common/database/types';
 
-describe('TransportsRepository', () => {
-  let repository: TransportsRepository;
+describe('RoutesRepository', () => {
+  let repository: RoutesRepository;
   let db: Kysely<Database>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TransportsRepository,
+        RoutesRepository,
         {
           provide: 'DATABASE_CONNECTION',
           useValue: {
@@ -30,7 +30,7 @@ describe('TransportsRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<TransportsRepository>(TransportsRepository);
+    repository = module.get<RoutesRepository>(RoutesRepository);
     db = module.get('DATABASE_CONNECTION');
   });
 
@@ -115,16 +115,16 @@ describe('TransportsRepository', () => {
   it('should call create method', async () => {
     await repository.create({
       id: '1',
-      cidadeOrigem: 'Cidade Origem',
-      cidadeDestino: 'Cidade Destino',
-      diaSemana: '1',
-      localOrigem: 'Local Origem',
-      horarioSaida: '12:00',
-      horarioChegada: '13:00',
-      preco: 10,
-      idVeiculo: '1',
-      idEmpresa: '1',
-      idCidade: '1',
+      originCity: 'Cidade Origem',
+      destinationCity: 'Cidade Destino',
+      dayOfWeek: '1',
+      originLocation: 'Local Origem',
+      departureTime: '12:00',
+      arrivalTime: '13:00',
+      price: 10,
+      vehicleId: '1',
+      companyId: '1',
+      cityId: '1',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -133,7 +133,7 @@ describe('TransportsRepository', () => {
 
   it('should call update method', async () => {
     await repository.update('1', {
-      cidadeOrigem: 'Cidade Origem',
+      originCity: 'Cidade Origem',
     });
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
   });

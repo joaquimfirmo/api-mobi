@@ -1,17 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Transport } from './entities/transport.entity';
-import { CreateTransportDto } from './dto/create-transport.dto';
-import { UpdateTransportDto } from './dto/update-transport.dto';
-import { TransportsRepository } from './transports.repository';
+import { Route } from './entities/route.entity';
+import { CreateRouteDTO } from './dto/create-route.dto';
+import { UpdateRouteDTO } from './dto/update-route.dto';
+import { RoutesRepository } from './routes.repository';
 
 @Injectable()
-export class TransportsService {
+export class RoutesService {
   constructor(
     private readonly logger: Logger,
-    private readonly transportsRepository: TransportsRepository,
+    private readonly transportsRepository: RoutesRepository,
   ) {}
 
-  async findAll(): Promise<Transport[]> {
+  async findAll(): Promise<Route[]> {
     const transports = await this.transportsRepository.findAll();
     if (transports.length === 0) {
       throw new NotFoundException('Nenhum transporte foi encontrado');
@@ -19,7 +19,7 @@ export class TransportsService {
 
     return transports.map(
       (transport) =>
-        new Transport(
+        new Route(
           transport.cidade_origem,
           transport.cidade_destino,
           transport.local_origem,
@@ -37,7 +37,7 @@ export class TransportsService {
     );
   }
 
-  async findOne(id: string): Promise<Transport> {
+  async findOne(id: string): Promise<Route> {
     const result = await this.transportsRepository.findById(id);
     if (result.length === 0) {
       throw new NotFoundException(
@@ -46,7 +46,7 @@ export class TransportsService {
     }
     const [transport] = result;
 
-    return new Transport(
+    return new Route(
       transport.cidade_origem,
       transport.cidade_destino,
       transport.local_origem,
@@ -80,29 +80,27 @@ export class TransportsService {
     return transports;
   }
 
-  async create(createTransportDto: CreateTransportDto): Promise<Transport> {
-    this.logger.log(
-      `Criando transporte: ${JSON.stringify(createTransportDto)}`,
-    );
+  async create(createRouteDTO: CreateRouteDTO): Promise<Route> {
+    this.logger.log(`Criando transporte: ${JSON.stringify(CreateRouteDTO)}`);
 
-    const transport = new Transport(
-      createTransportDto.cidadeOrigem,
-      createTransportDto.cidadeDestino,
-      createTransportDto.localOrigem,
-      createTransportDto.diaSemana,
-      createTransportDto.horarioSaida,
-      createTransportDto.horarioChegada,
-      createTransportDto.preco,
-      createTransportDto.idVeiculo,
-      createTransportDto.idEmpresa,
-      createTransportDto.idCidade,
+    const transport = new Route(
+      createRouteDTO.originCity,
+      createRouteDTO.destinationCity,
+      createRouteDTO.originLocation,
+      createRouteDTO.dayOfWeek,
+      createRouteDTO.departureTime,
+      createRouteDTO.arrivalTime,
+      createRouteDTO.price,
+      createRouteDTO.vehicleId,
+      createRouteDTO.companyId,
+      createRouteDTO.cityId,
     );
     const result = await this.transportsRepository.create(transport);
 
     const [createdTransport] = result;
     this.logger.log(`Transporte criado: ${JSON.stringify(createdTransport)}`);
 
-    return new Transport(
+    return new Route(
       createdTransport.cidade_origem,
       createdTransport.cidade_destino,
       createdTransport.local_origem,
@@ -118,10 +116,7 @@ export class TransportsService {
       createdTransport.updated_at,
     );
   }
-  async update(
-    id: string,
-    updateTransportDto: UpdateTransportDto,
-  ): Promise<Transport> {
+  async update(id: string, updateRouteDTO: UpdateRouteDTO): Promise<Route> {
     const transportForUpdateExisting =
       await this.transportsRepository.findById(id);
 
@@ -135,17 +130,17 @@ export class TransportsService {
       );
     }
 
-    const transport = new Transport(
-      updateTransportDto.cidadeOrigem,
-      updateTransportDto.cidadeDestino,
-      updateTransportDto.localOrigem,
-      updateTransportDto.diaSemana,
-      updateTransportDto.horarioSaida,
-      updateTransportDto.horarioChegada,
-      updateTransportDto.preco,
-      updateTransportDto.idVeiculo,
-      updateTransportDto.idEmpresa,
-      updateTransportDto.idCidade,
+    const transport = new Route(
+      updateRouteDTO.originCity,
+      updateRouteDTO.destinationCity,
+      updateRouteDTO.originLocation,
+      updateRouteDTO.dayOfWeek,
+      updateRouteDTO.departureTime,
+      updateRouteDTO.arrivalTime,
+      updateRouteDTO.price,
+      updateRouteDTO.vehicleId,
+      updateRouteDTO.companyId,
+      updateRouteDTO.cityId,
     );
 
     const result = await this.transportsRepository.update(id, transport);
@@ -156,7 +151,7 @@ export class TransportsService {
       `Transporte atualizado: ${JSON.stringify(updatedTransport)}`,
     );
 
-    return new Transport(
+    return new Route(
       updatedTransport.cidade_origem,
       updatedTransport.cidade_destino,
       updatedTransport.local_origem,

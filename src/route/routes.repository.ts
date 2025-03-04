@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
 import { Database } from 'src/common/database/types';
-import { Transport } from './entities/transport.entity';
-import { UpdateTransportDto } from './dto/update-transport.dto';
+import { Route } from './entities/route.entity';
+import { UpdateRouteDTO } from './dto/update-route.dto';
 
 @Injectable()
-export class TransportsRepository {
+export class RoutesRepository {
   constructor(@Inject('DATABASE_CONNECTION') private db: Kysely<Database>) {}
 
   async findAll() {
@@ -109,23 +109,23 @@ export class TransportsRepository {
     }
   }
 
-  async create(transport: Transport) {
+  async create(route: Route) {
     try {
       return await this.db.transaction().execute(async (trx) => {
         return await trx
           .insertInto('transportes')
           .values({
-            id: transport.id,
-            cidade_origem: transport.cidadeOrigem,
-            cidade_destino: transport.cidadeDestino,
-            local_origem: transport.localOrigem,
-            dia_semana: transport.diaSemana,
-            horario_saida: transport.horarioSaida,
-            horario_chegada: transport.horarioChegada,
-            preco: transport.preco,
-            id_veiculo: transport.idVeiculo,
-            id_empresa: transport.idEmpresa,
-            id_cidade: transport.idCidade,
+            id: route.id,
+            cidade_origem: route.originCity,
+            cidade_destino: route.destinationCity,
+            local_origem: route.originLocation,
+            dia_semana: route.dayOfWeek,
+            horario_saida: route.departureTime,
+            horario_chegada: route.arrivalTime,
+            preco: route.price,
+            id_veiculo: route.vehicleId,
+            id_empresa: route.companyId,
+            id_cidade: route.cityId,
           })
           .returning([
             'id',
@@ -153,32 +153,32 @@ export class TransportsRepository {
     }
   }
 
-  async update(id: string, transport: UpdateTransportDto) {
+  async update(id: string, route: UpdateRouteDTO) {
     try {
       return await this.db.transaction().execute(async (trx) => {
         return await trx
           .updateTable('transportes')
           .set({
-            ...(transport.cidadeOrigem && {
-              cidade_origem: transport.cidadeOrigem,
+            ...(route.originCity && {
+              cidade_origem: route.originCity,
             }),
-            ...(transport.cidadeDestino && {
-              cidade_destino: transport.cidadeDestino,
+            ...(route.destinationCity && {
+              cidade_destino: route.destinationCity,
             }),
-            ...(transport.localOrigem && {
-              local_origem: transport.localOrigem,
+            ...(route.originLocation && {
+              local_origem: route.originLocation,
             }),
-            ...(transport.diaSemana && { dia_semana: transport.diaSemana }),
-            ...(transport.horarioSaida && {
-              horario_saida: transport.horarioSaida,
+            ...(route.dayOfWeek && { dia_semana: route.dayOfWeek }),
+            ...(route.departureTime && {
+              horario_saida: route.departureTime,
             }),
-            ...(transport.horarioChegada && {
-              horario_chegada: transport.horarioChegada,
+            ...(route.arrivalTime && {
+              horario_chegada: route.arrivalTime,
             }),
-            ...(transport.preco && { preco: transport.preco }),
-            ...(transport.idVeiculo && { id_veiculo: transport.idVeiculo }),
-            ...(transport.idEmpresa && { id_empresa: transport.idEmpresa }),
-            ...(transport.idCidade && { id_cidade: transport.idCidade }),
+            ...(route.price && { preco: route.price }),
+            ...(route.vehicleId && { id_veiculo: route.vehicleId }),
+            ...(route.companyId && { id_empresa: route.companyId }),
+            ...(route.cityId && { id_cidade: route.cityId }),
             updated_at: sql`now()`,
           })
           .where('id', '=', id)

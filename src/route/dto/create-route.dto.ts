@@ -7,7 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 
-export class CreateTransportDto {
+export class CreateRouteDTO {
   @IsString()
   @MinLength(2, {
     message: 'Cidade de origem deve ter no mínimo 2 caracteres',
@@ -15,7 +15,7 @@ export class CreateTransportDto {
   @MaxLength(100, {
     message: 'Cidade de origem deve ter no máximo 100 caracteres',
   })
-  public readonly cidadeOrigem: string;
+  public readonly originCity: string;
 
   @IsString()
   @MinLength(2, {
@@ -24,7 +24,7 @@ export class CreateTransportDto {
   @MaxLength(100, {
     message: 'Cidade de destino deve ter no máximo 100 caracteres',
   })
-  public readonly cidadeDestino: string;
+  public readonly destinationCity: string;
 
   @IsEnum(
     [
@@ -40,7 +40,7 @@ export class CreateTransportDto {
       message: 'Dia da semana inválido',
     },
   )
-  public readonly diaSemana: string;
+  public readonly dayOfWeek: string;
 
   @IsString()
   @MinLength(5, {
@@ -49,26 +49,26 @@ export class CreateTransportDto {
   @MaxLength(100, {
     message: 'Local de origem deve ter no máximo 100 caracteres',
   })
-  public readonly localOrigem: string;
+  public readonly originLocation: string;
 
   @IsString()
   @Matches(/^([0-9]{2})\:([0-9]{2})\:([0-9]{2})$/)
-  public readonly horarioSaida: string;
+  public readonly departureTime: string;
 
   @IsString()
   @Matches(/^([0-9]{2})\:([0-9]{2})\:([0-9]{2})$/)
-  public readonly horarioChegada: string;
+  public readonly arrivalTime: string;
 
   @IsString()
   @Matches(/^\$\d+(?:\.\d{0,2})$/)
-  public readonly preco: number;
+  public readonly price: number;
 
   @IsUUID(4)
-  public readonly idVeiculo: string;
+  public readonly vehicleId: string;
 
   @IsUUID(4)
-  public readonly idEmpresa: string;
+  public readonly companyId: string;
 
   @IsUUID(4)
-  public readonly idCidade: string;
+  public readonly cityId: string;
 }
