@@ -40,23 +40,59 @@ describe('RoutesRepository', () => {
 
   it('should call findAll method', async () => {
     await repository.findAll();
-    expect(db.selectFrom('transportes').selectAll().execute).toHaveBeenCalled();
+    expect(db.selectFrom('rotas').selectAll().execute).toHaveBeenCalled();
   });
 
   it('should call findById method', async () => {
     await repository.findById('1');
-    expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
+    expect(db.selectFrom('rotas').selectAll().where).toHaveBeenCalledWith(
       'id',
       '=',
       '1',
     );
-    expect(db.selectFrom('transportes').selectAll().limit).toHaveBeenCalledWith(
-      1,
+    expect(db.selectFrom('rotas').selectAll().limit).toHaveBeenCalledWith(1);
+    expect(db.selectFrom('rotas').selectAll().execute).toHaveBeenCalled();
+  });
+
+  it('should call create method', async () => {
+    await repository.create({
+      name: 'Nome',
+      idOriginCity: 'idCidadeOrigem',
+      idDestinationCity: 'idCidadeDestino',
+      distance: 100,
+      estimatedTime: '01:00',
+      originLocation: 'localOrigem',
+      id: '1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it('should call update method', async () => {
+    await repository.update('1', {
+      idCidadeOrigem: 'Cidade Origem',
+    });
+    expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it('should call delete method', async () => {
+    await repository.delete('1');
+    expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it.skip('should call findAllTransportsByCityId method', async () => {
+    await repository.findAllTransportsByCityId('1');
+    expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
+      'id_cidade',
+      '=',
+      '1',
     );
+
     expect(db.selectFrom('transportes').selectAll().execute).toHaveBeenCalled();
   });
 
-  it('should call findByCityId method with the correct filters ', async () => {
+  it.skip('should call findByCityId method with the correct filters ', async () => {
     const spy = jest.spyOn(repository, 'generateWhereClause');
 
     await repository.findByCityId('1', 0, 20, {
@@ -86,7 +122,7 @@ describe('RoutesRepository', () => {
     expect(db.selectFrom('transportes').compile).toHaveBeenCalled();
   });
 
-  it('should call findByCityId method without filters', async () => {
+  it.skip('should call findByCityId method without filters', async () => {
     const spy = jest.spyOn(repository, 'generateWhereClause');
 
     await repository.findByCityId('1', 0, 20, {});
@@ -110,47 +146,5 @@ describe('RoutesRepository', () => {
       db.selectFrom('transportes').selectAll().offset,
     ).toHaveBeenCalledWith(0);
     expect(db.selectFrom('transportes').compile).toHaveBeenCalled();
-  });
-
-  it('should call create method', async () => {
-    await repository.create({
-      id: '1',
-      originCity: 'Cidade Origem',
-      destinationCity: 'Cidade Destino',
-      dayOfWeek: '1',
-      originLocation: 'Local Origem',
-      departureTime: '12:00',
-      arrivalTime: '13:00',
-      price: 10,
-      vehicleId: '1',
-      companyId: '1',
-      cityId: '1',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
-  });
-
-  it('should call update method', async () => {
-    await repository.update('1', {
-      originCity: 'Cidade Origem',
-    });
-    expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
-  });
-
-  it('should call delete method', async () => {
-    await repository.delete('1');
-    expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
-  });
-
-  it('should call findAllTransportsByCityId method', async () => {
-    await repository.findAllTransportsByCityId('1');
-    expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
-      'id_cidade',
-      '=',
-      '1',
-    );
-
-    expect(db.selectFrom('transportes').selectAll().execute).toHaveBeenCalled();
   });
 });

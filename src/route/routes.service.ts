@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Route } from './entities/route.entity';
 import { CreateRouteDTO } from './dto/create-route.dto';
 import { UpdateRouteDTO } from './dto/update-route.dto';
@@ -8,176 +13,153 @@ import { RoutesRepository } from './routes.repository';
 export class RoutesService {
   constructor(
     private readonly logger: Logger,
-    private readonly transportsRepository: RoutesRepository,
+    private readonly routesRepository: RoutesRepository,
   ) {}
 
   async findAll(): Promise<Route[]> {
-    const transports = await this.transportsRepository.findAll();
-    if (transports.length === 0) {
+    const routes = await this.routesRepository.findAll();
+    if (routes.length === 0) {
       throw new NotFoundException('Nenhum transporte foi encontrado');
     }
 
-    return transports.map(
-      (transport) =>
+    return routes.map(
+      (route) =>
         new Route(
-          transport.cidade_origem,
-          transport.cidade_destino,
-          transport.local_origem,
-          transport.dia_semana,
-          transport.horario_saida,
-          transport.horario_chegada,
-          transport.preco,
-          transport.id_empresa,
-          transport.id_veiculo,
-          transport.id_cidade,
-          transport.id,
-          transport.created_at,
-          transport.updated_at,
+          route.nome,
+          route.id_cidade_origem,
+          route.id_cidade_destino,
+          route.distancia,
+          route.tempo_estimado,
+          route.local,
+          route.id,
+          route.created_at,
+          route.updated_at,
         ),
     );
   }
 
   async findOne(id: string): Promise<Route> {
-    const result = await this.transportsRepository.findById(id);
+    const result = await this.routesRepository.findById(id);
     if (result.length === 0) {
       throw new NotFoundException(
         `Transporte com o ID:${id} informado não foi encontrado`,
       );
     }
-    const [transport] = result;
+    const [route] = result;
 
     return new Route(
-      transport.cidade_origem,
-      transport.cidade_destino,
-      transport.local_origem,
-      transport.dia_semana,
-      transport.horario_saida,
-      transport.horario_chegada,
-      transport.preco,
-      transport.id_veiculo,
-      transport.id_empresa,
-      transport.id_cidade,
-      transport.id,
-      transport.created_at,
-      transport.updated_at,
+      route.nome,
+      route.id_cidade_origem,
+      route.id_cidade_destino,
+      route.distancia,
+      route.tempo_estimado,
+      route.local,
+      route.id,
+      route.created_at,
+      route.updated_at,
     );
-  }
-
-  async findTransportsByCity(cityId: string, query): Promise<any> {
-    const { page, limit, day, hour, city_destination } = query;
-    const transports = await this.transportsRepository.findByCityId(
-      cityId,
-      page,
-      limit,
-      { day, hour, city_destination },
-    );
-    if (transports.length === 0) {
-      throw new NotFoundException(
-        `Nenhum transporte foi encontrado para a cidade com o ID:${cityId}`,
-      );
-    }
-
-    return transports;
   }
 
   async create(createRouteDTO: CreateRouteDTO): Promise<Route> {
-    this.logger.log(`Criando transporte: ${JSON.stringify(CreateRouteDTO)}`);
+    const [routeNameExists, routeExistsByCities] = await Promise.all([
+      this.routesRepository.findRouteByName(createRouteDTO.nome),
+      this.routesRepository.findRouteByCities(
+        createRouteDTO.idCidadeOrigem,
+        createRouteDTO.idCidadeDestino,
+      ),
+    ]);
 
-    const transport = new Route(
-      createRouteDTO.originCity,
-      createRouteDTO.destinationCity,
-      createRouteDTO.originLocation,
-      createRouteDTO.dayOfWeek,
-      createRouteDTO.departureTime,
-      createRouteDTO.arrivalTime,
-      createRouteDTO.price,
-      createRouteDTO.vehicleId,
-      createRouteDTO.companyId,
-      createRouteDTO.cityId,
-    );
-    const result = await this.transportsRepository.create(transport);
-
-    const [createdTransport] = result;
-    this.logger.log(`Transporte criado: ${JSON.stringify(createdTransport)}`);
-
-    return new Route(
-      createdTransport.cidade_origem,
-      createdTransport.cidade_destino,
-      createdTransport.local_origem,
-      createdTransport.dia_semana,
-      createdTransport.horario_saida,
-      createdTransport.horario_chegada,
-      createdTransport.preco,
-      createdTransport.id_veiculo,
-      createdTransport.id_empresa,
-      createdTransport.id_cidade,
-      createdTransport.id,
-      createdTransport.created_at,
-      createdTransport.updated_at,
-    );
-  }
-  async update(id: string, updateRouteDTO: UpdateRouteDTO): Promise<Route> {
-    const transportForUpdateExisting =
-      await this.transportsRepository.findById(id);
-
-    this.logger.log(
-      `Transporte para atualização: ${JSON.stringify(transportForUpdateExisting)}`,
-    );
-
-    if (transportForUpdateExisting.length === 0) {
-      throw new NotFoundException(
-        `Transporte com o ID:${id} informado não foi encontrado`,
+    if (routeNameExists.length > 0 || routeExistsByCities.length > 0) {
+      this.logger.warn(
+        `Falha na criação da rota: Já existe uma rota com o nome ${createRouteDTO.nome} ou com os Ids das cidades de origem:${createRouteDTO.idCidadeOrigem} e destino ${createRouteDTO.idCidadeDestino}, informados`,
+      );
+      throw new BadRequestException(
+        'Já existe uma rota com o nome informado ou com as cidades de origem e destino informadas',
       );
     }
 
-    const transport = new Route(
-      updateRouteDTO.originCity,
-      updateRouteDTO.destinationCity,
-      updateRouteDTO.originLocation,
-      updateRouteDTO.dayOfWeek,
-      updateRouteDTO.departureTime,
-      updateRouteDTO.arrivalTime,
-      updateRouteDTO.price,
-      updateRouteDTO.vehicleId,
-      updateRouteDTO.companyId,
-      updateRouteDTO.cityId,
+    this.logger.log(`Criando rota: ${JSON.stringify(CreateRouteDTO)}`);
+
+    const route = new Route(
+      createRouteDTO.nome,
+      createRouteDTO.idCidadeOrigem,
+      createRouteDTO.idCidadeDestino,
+      createRouteDTO.distancia,
+      createRouteDTO.tempoEstimado,
+      createRouteDTO.localOrigem,
     );
+    const result = await this.routesRepository.create(route);
 
-    const result = await this.transportsRepository.update(id, transport);
-
-    const [updatedTransport] = result;
-
-    this.logger.log(
-      `Transporte atualizado: ${JSON.stringify(updatedTransport)}`,
-    );
+    const [createdRoute] = result;
+    this.logger.log(`Rota criada: ${JSON.stringify(createdRoute)}`);
 
     return new Route(
-      updatedTransport.cidade_origem,
-      updatedTransport.cidade_destino,
-      updatedTransport.local_origem,
-      updatedTransport.dia_semana,
-      updatedTransport.horario_saida,
-      updatedTransport.horario_chegada,
-      updatedTransport.preco,
-      updatedTransport.id_veiculo,
-      updatedTransport.id_empresa,
-      updatedTransport.id_cidade,
-      updatedTransport.id,
-      updatedTransport.created_at,
-      updatedTransport.updated_at,
+      createdRoute.nome,
+      createdRoute.id_cidade_origem,
+      createdRoute.id_cidade_destino,
+      createdRoute.distancia,
+      createdRoute.tempo_estimado,
+      createdRoute.local,
+      createdRoute.id,
+      createdRoute.created_at,
+      createdRoute.updated_at,
+    );
+  }
+
+  async update(id: string, route: UpdateRouteDTO): Promise<Route> {
+    if (Object.keys(route).length === 0) {
+      this.logger.warn('Dados para atualização da rota não informados');
+      throw new BadRequestException(
+        'Dados para atualização da rota não informados',
+      );
+    }
+
+    const routeForUpdateExisting = await this.routesRepository.findById(id);
+
+    if (routeForUpdateExisting.length === 0) {
+      this.logger.warn(
+        `Falha na atualização da rota: Rota com o ID:${id} informado não foi encontrada`,
+      );
+      throw new BadRequestException(
+        `Rota com o ID:${id} informado não foi encontrada`,
+      );
+    }
+
+    this.logger.log(`Dados para atualização da rota: ${JSON.stringify(route)}`);
+
+    const result = await this.routesRepository.update(id, route);
+
+    const [updatedRoute] = result;
+
+    this.logger.log(`Rota atualizadoa: ${JSON.stringify(updatedRoute)}`);
+
+    return new Route(
+      updatedRoute.nome,
+      updatedRoute.id_cidade_origem,
+      updatedRoute.id_cidade_destino,
+      updatedRoute.distancia,
+      updatedRoute.tempo_estimado,
+      updatedRoute.local,
+      updatedRoute.id,
+      updatedRoute.created_at,
+      updatedRoute.updated_at,
     );
   }
 
   async remove(id: string) {
-    this.logger.log(`Excluindo transporte com o ID:${id}`);
-    const transportExists = await this.transportsRepository.findById(id);
+    const routeExists = await this.routesRepository.findById(id);
 
-    if (transportExists.length === 0) {
+    if (routeExists.length === 0) {
+      this.logger.warn(
+        `Falha na exclusão da rota: Rota com o ID:${id} não foi encontrada`,
+      );
       throw new NotFoundException(
-        `Transporte para exclusão com o ID:${id} informado não foi encontrado`,
+        `Rota para exclusão com o ID:${id} não foi encontrada`,
       );
     }
 
-    return this.transportsRepository.delete(id);
+    await this.routesRepository.delete(id);
+    this.logger.log(`Rota com o ID:${id} excluída com sucesso`);
+    return;
   }
 }

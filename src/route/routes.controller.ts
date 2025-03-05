@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Query,
   Delete,
   ParseUUIDPipe,
 } from '@nestjs/common';
@@ -15,16 +14,16 @@ import { RoutesService } from './routes.service';
 import { CreateRouteDTO } from './dto/create-route.dto';
 import { UpdateRouteDTO } from './dto/update-route.dto';
 
-@Controller('transportes')
+@Controller('rotas')
 export class RoutesController {
-  constructor(private readonly transportsService: RoutesService) {}
+  constructor(private readonly routesService: RoutesService) {}
 
   @Get()
   findAll() {
-    return this.transportsService.findAll();
+    return this.routesService.findAll();
   }
 
-  @Get('transporte/:id')
+  @Get('rota/:id')
   async findOne(
     @Param(
       'id',
@@ -34,38 +33,15 @@ export class RoutesController {
     )
     id: string,
   ): Promise<Route> {
-    return await this.transportsService.findOne(id);
+    return await this.routesService.findOne(id);
   }
 
-  @Get('cidade/:id')
-  async findByCityId(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-      }),
-    )
-    id: string,
-
-    @Query() query,
-  ): Promise<any> {
-    const { page, limit, day, hour, city_destination } = query;
-
-    return await this.transportsService.findTransportsByCity(id, {
-      page,
-      limit,
-      day,
-      hour,
-      city_destination,
-    });
+  @Post('rota')
+  create(@Body() createRouteDTO: CreateRouteDTO) {
+    return this.routesService.create(createRouteDTO);
   }
 
-  @Post('transporte')
-  create(@Body() createTransportDto: CreateRouteDTO) {
-    return this.transportsService.create(createTransportDto);
-  }
-
-  @Patch('transporte/:id')
+  @Patch('rota/:id')
   update(
     @Param(
       'id',
@@ -76,10 +52,10 @@ export class RoutesController {
     id: string,
     @Body() payload: UpdateRouteDTO,
   ) {
-    return this.transportsService.update(id, payload);
+    return this.routesService.update(id, payload);
   }
 
-  @Delete('transporte/:id')
+  @Delete('rota/:id')
   remove(
     @Param(
       'id',
@@ -89,6 +65,6 @@ export class RoutesController {
     )
     id: string,
   ) {
-    return this.transportsService.remove(id);
+    return this.routesService.remove(id);
   }
 }

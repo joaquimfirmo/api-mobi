@@ -15,11 +15,11 @@ export class RoutesRepository {
 
   async findAll() {
     try {
-      return await this.db.selectFrom('transportes').selectAll().execute();
+      return await this.db.selectFrom('rotas').selectAll().execute();
     } catch (error) {
       console.error(error);
       throw new BadRequestException({
-        message: 'Erro ao buscar transportes',
+        message: 'Erro ao buscar rotas',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -28,7 +28,7 @@ export class RoutesRepository {
   async findById(id: string) {
     try {
       return await this.db
-        .selectFrom('transportes')
+        .selectFrom('rotas')
         .selectAll()
         .where('id', '=', id)
         .limit(1)
@@ -36,7 +36,7 @@ export class RoutesRepository {
     } catch (error) {
       console.error(error);
       throw new BadRequestException({
-        message: 'Erro ao buscar transporte por id',
+        message: 'Erro ao buscar rota por id',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -113,32 +113,24 @@ export class RoutesRepository {
     try {
       return await this.db.transaction().execute(async (trx) => {
         return await trx
-          .insertInto('transportes')
+          .insertInto('rotas')
           .values({
             id: route.id,
-            cidade_origem: route.originCity,
-            cidade_destino: route.destinationCity,
-            local_origem: route.originLocation,
-            dia_semana: route.dayOfWeek,
-            horario_saida: route.departureTime,
-            horario_chegada: route.arrivalTime,
-            preco: route.price,
-            id_veiculo: route.vehicleId,
-            id_empresa: route.companyId,
-            id_cidade: route.cityId,
+            nome: route.name,
+            id_cidade_origem: route.idOriginCity,
+            id_cidade_destino: route.idDestinationCity,
+            distancia: route.distance,
+            tempo_estimado: route.estimatedTime,
+            local: route.originLocation,
           })
           .returning([
             'id',
-            'cidade_origem',
-            'cidade_destino',
-            'local_origem',
-            'dia_semana',
-            'horario_saida',
-            'horario_chegada',
-            'preco',
-            'id_veiculo',
-            'id_empresa',
-            'id_cidade',
+            'nome',
+            'id_cidade_origem',
+            'id_cidade_destino',
+            'distancia',
+            'tempo_estimado',
+            'local',
             'created_at',
             'updated_at',
           ])
@@ -153,47 +145,68 @@ export class RoutesRepository {
     }
   }
 
+  async findRouteByCities(idOriginCity: string, idDestinationCity: string) {
+    try {
+      return await this.db
+        .selectFrom('rotas')
+        .selectAll()
+        .where('id_cidade_origem', '=', idOriginCity)
+        .where('id_cidade_destino', '=', idDestinationCity)
+        .execute();
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException({
+        message: 'Erro ao buscar rota por cidades',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
+  async findRouteByName(name: string) {
+    try {
+      return await this.db
+        .selectFrom('rotas')
+        .selectAll()
+        .where('nome', '=', name)
+        .execute();
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException({
+        message: 'Erro ao buscar rota por nome',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
   async update(id: string, route: UpdateRouteDTO) {
     try {
       return await this.db.transaction().execute(async (trx) => {
         return await trx
-          .updateTable('transportes')
+          .updateTable('rotas')
           .set({
-            ...(route.originCity && {
-              cidade_origem: route.originCity,
+            ...(route.nome && { nome: route.nome }),
+            ...(route.idCidadeOrigem && {
+              cidade_origem: route.idCidadeOrigem,
             }),
-            ...(route.destinationCity && {
-              cidade_destino: route.destinationCity,
+            ...(route.idCidadeDestino && {
+              cidade_destino: route.idCidadeDestino,
             }),
-            ...(route.originLocation && {
-              local_origem: route.originLocation,
+            ...(route.distancia && { distancia: route.distancia }),
+            ...(route.tempoEstimado && {
+              tempo_estimado: route.tempoEstimado,
             }),
-            ...(route.dayOfWeek && { dia_semana: route.dayOfWeek }),
-            ...(route.departureTime && {
-              horario_saida: route.departureTime,
-            }),
-            ...(route.arrivalTime && {
-              horario_chegada: route.arrivalTime,
-            }),
-            ...(route.price && { preco: route.price }),
-            ...(route.vehicleId && { id_veiculo: route.vehicleId }),
-            ...(route.companyId && { id_empresa: route.companyId }),
-            ...(route.cityId && { id_cidade: route.cityId }),
+            ...(route.localOrigem && { local: route.localOrigem }),
             updated_at: sql`now()`,
           })
           .where('id', '=', id)
           .returning([
             'id',
-            'cidade_origem',
-            'cidade_destino',
-            'local_origem',
-            'dia_semana',
-            'horario_saida',
-            'horario_chegada',
-            'preco',
-            'id_veiculo',
-            'id_empresa',
-            'id_cidade',
+            'nome',
+            'id_cidade_origem',
+            'id_cidade_destino',
+            'distancia',
+            'tempo_estimado',
+            'local',
             'created_at',
             'updated_at',
           ])
@@ -211,16 +224,12 @@ export class RoutesRepository {
   async delete(id: string) {
     try {
       return await this.db.transaction().execute(async (trx) => {
-        return await trx
-          .deleteFrom('transportes')
-          .where('id', '=', id)
-          .returning(['id'])
-          .execute();
+        return await trx.deleteFrom('rotas').where('id', '=', id).execute();
       });
     } catch (error) {
       console.error(error);
       throw new BadRequestException({
-        message: 'Erro ao deletar transporte',
+        message: 'Erro ao deletar rotas',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
