@@ -53,10 +53,10 @@ export interface RotasTable {
   id_cidade_origem: ColumnType<string, string>;
   id_cidade_destino: ColumnType<string, string>;
   distancia: number;
-  tempo_estimado: number;
+  tempo_estimado: string;
+  local: string;
   created_at?: ColumnType<Date, string | undefined, never>;
   updated_at?: ColumnType<Date, string | undefined, null>;
-  local: string;
 }
 
 export interface TransporteTable {
