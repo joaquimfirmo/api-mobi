@@ -8,6 +8,7 @@ import { CityModule } from './city/city.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { RoutesModule } from './route/routes.module';
 import { UsersModule } from './users/users.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from './users/users.module';
     VehiclesModule,
     RoutesModule,
     UsersModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

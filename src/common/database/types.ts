@@ -40,8 +40,8 @@ export interface CidadeTable {
 
 export interface HorariosTable {
   id: ColumnType<string, string>;
-  hora_partida: ColumnType<Date, string>;
-  hora_chegada: ColumnType<Date, string>;
+  hora_partida: string;
+  hora_chegada: string;
   id_rota: ColumnType<string, string>;
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, null>;
