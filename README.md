@@ -96,19 +96,13 @@ async function bootstrap() {
 bootstrap();
 ```
 
-## Licença
-
-Este projeto é licenciado sob a licença MIT. Veja o arquivo [LICENSE](https://github.com/nestjs/nest/blob/master/LICENSE) para mais detalhes.
-
-````
-
 ## Instalação
 
 Certifique-se de ter o [Node.js](https://nodejs.org/) versão 20 instalada.
 
 ```bash
 $ yarn install
-````
+```
 
 ## Contato
 
