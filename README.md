@@ -96,14 +96,6 @@ async function bootstrap() {
 bootstrap();
 ```
 
-## Instalação
-
-Certifique-se de ter o [Node.js](https://nodejs.org/) versão 20 instalada.
-
-```bash
-$ yarn install
-```
-
 ## Contato
 
 Para mais informações ou dúvidas, entre em contato:
