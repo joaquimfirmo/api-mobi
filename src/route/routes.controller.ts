@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 
+import { StringValidationPipe } from '../common/pipes/string-validation.pipe';
 import { Route } from './entities/route.entity';
 import { RoutesService } from './routes.service';
 import { CreateRouteDTO } from './dto/create-route.dto';
@@ -34,6 +35,13 @@ export class RoutesController {
     id: string,
   ): Promise<Route> {
     return await this.routesService.findOne(id);
+  }
+
+  @Get('rota/:nome/transportes')
+  async findTransportsByRouteName(
+    @Param('nome', StringValidationPipe) routeName: string,
+  ) {
+    return await this.routesService.findAllTransportOptionsByRoute(routeName);
   }
 
   @Post('rota')

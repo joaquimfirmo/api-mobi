@@ -250,4 +250,32 @@ export class RoutesRepository {
       });
     }
   }
+
+  async findAllTransportsOptionsByRoute(name: string) {
+    try {
+      return await this.db
+        .selectFrom('empresas_rotas')
+        .innerJoin('empresas', 'empresas_rotas.id_empresa', 'empresas.id')
+        .innerJoin('rotas', 'empresas_rotas.id_rota', 'rotas.id')
+        .innerJoin('horarios', 'empresas_rotas.id_horario', 'horarios.id')
+        .innerJoin('veiculos', 'empresas_rotas.id_veiculo', 'veiculos.id')
+        .where('rotas.nome', '=', name)
+        .select([
+          'rotas.nome as rota',
+          'empresas.nome_fantasia as empresa',
+          'rotas.distancia as distancia_km',
+          'rotas.tempo_estimado as duracao',
+          'veiculos.nome as veiculo',
+          'horarios.hora_partida as horario_saida',
+          'horarios.hora_chegada as horario_chegada',
+        ])
+        .execute();
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException({
+        message: 'Erro ao buscar transportes por nome da rota',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 }

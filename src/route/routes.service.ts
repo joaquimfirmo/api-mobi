@@ -7,6 +7,7 @@ import {
 import { Route } from './entities/route.entity';
 import { CreateRouteDTO } from './dto/create-route.dto';
 import { UpdateRouteDTO } from './dto/update-route.dto';
+import { TransportOptionDTO } from './dto/transport-option.dto';
 import { RoutesRepository } from './routes.repository';
 
 @Injectable()
@@ -60,6 +61,20 @@ export class RoutesService {
     );
   }
 
+  async findAllTransportOptionsByRoute(
+    name: string,
+  ): Promise<TransportOptionDTO[] | []> {
+    const result =
+      await this.routesRepository.findAllTransportsOptionsByRoute(name);
+    if (result.length === 0) {
+      this.logger.warn(
+        `Nenhum transporte encontrado para a rota com o nome ${name}`,
+      );
+      return [];
+    }
+
+    return result;
+  }
   async create(createRouteDTO: CreateRouteDTO): Promise<Route> {
     const [routeNameExists, routeExistsByCities] = await Promise.all([
       this.routesRepository.findRouteByName(createRouteDTO.nome),
