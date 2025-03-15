@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { VehicleRepository } from './vehicles.repository';
@@ -10,18 +15,31 @@ export class VehiclesService {
     private readonly logger: Logger,
     private readonly vehicleRepository: VehicleRepository,
   ) {}
+
   async create(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
     this.logger.log(`Criando veículo: ${JSON.stringify(createVehicleDto)}`);
+
+    const vehicleExists = await this.vehicleRepository.findByName(
+      createVehicleDto.nome,
+    );
+    if (vehicleExists.length > 0) {
+      this.logger.warn(
+        `Veículo com o nome: ${createVehicleDto.nome} já existe`,
+      );
+      throw new BadRequestException(
+        `Veículo com o nome: ${createVehicleDto.nome} já existe`,
+      );
+    }
     const vehicle = new Vehicle(createVehicleDto.nome);
     this.logger.log(
       `Veículo: ${JSON.stringify(createVehicleDto)} criado com sucesso`,
     );
-    const result = await this.vehicleRepository.create(vehicle);
+    const [result] = await this.vehicleRepository.create(vehicle);
     return new Vehicle(
-      result[0].nome,
-      result[0].id,
-      result[0].created_at,
-      result[0].updated_at,
+      result.nome,
+      result.id,
+      result.created_at,
+      result.updated_at,
     );
   }
 
@@ -30,18 +48,18 @@ export class VehiclesService {
   }
 
   async findOne(id: string): Promise<Vehicle> {
-    const result = await this.vehicleRepository.findById(id);
-    if (result.length === 0) {
+    const [vehicle] = await this.vehicleRepository.findById(id);
+    if (!vehicle) {
       throw new NotFoundException(
         `Veículo com o ID:${id} informado não foi encontrado`,
       );
     }
 
     return new Vehicle(
-      result[0].nome,
-      result[0].id,
-      result[0].created_at,
-      result[0].updated_at,
+      vehicle.nome,
+      vehicle.id,
+      vehicle.created_at,
+      vehicle.updated_at,
     );
   }
 
@@ -51,6 +69,7 @@ export class VehiclesService {
   ): Promise<Vehicle> {
     const vehicleExists = await this.vehicleRepository.findById(id);
     if (vehicleExists.length === 0) {
+      this.logger.warn(`Veículo com o ID: ${id} não foi encontrado`);
       throw new NotFoundException(
         `Veículo com o ID:${id} informado não foi encontrado`,
       );
@@ -62,6 +81,7 @@ export class VehiclesService {
   async remove(id: string) {
     const vehicleExists = await this.vehicleRepository.findById(id);
     if (vehicleExists.length === 0) {
+      this.logger.warn(`Veículo com o ID: ${id} não foi encontrado`);
       throw new NotFoundException(
         `Veículo com o ID:${id} informado não foi encontrado`,
       );

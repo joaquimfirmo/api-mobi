@@ -42,6 +42,23 @@ export class VehicleRepository {
     }
   }
 
+  async findByName(nome: string) {
+    try {
+      return await this.db
+        .selectFrom('veiculos')
+        .selectAll()
+        .where('nome', '=', nome)
+        .limit(1)
+        .execute();
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException({
+        message: 'Erro ao buscar veículo por nome',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
   async create(vehicle: Vehicle) {
     try {
       return await this.db.transaction().execute(async (trx) => {

@@ -25,6 +25,7 @@ export interface EmpresasRotasTable {
   id_empresa: ColumnType<string, string>;
   id_rota: ColumnType<string, string>;
   id_horario: ColumnType<string, string>;
+  id_veiculo: ColumnType<string, string>;
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, null>;
 }
