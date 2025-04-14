@@ -58,57 +58,6 @@ export class RoutesRepository {
     return conditions.length > 0 ? sql.join(conditions, sql` AND `) : null;
   };
 
-  async findByCityId(
-    idCity: string,
-    page: number = 0,
-    limit: number = 20,
-    filters: any,
-  ) {
-    const { day, hour, city_destination } = filters;
-
-    const where = this.generateWhereClause(day, hour, city_destination);
-
-    try {
-      let query: any;
-
-      query = this.db
-        .selectFrom('transportes')
-        .innerJoin('veiculos', 'veiculos.id', 'transportes.id_veiculo')
-        .innerJoin('empresas', 'empresas.id', 'transportes.id_empresa')
-        .where('transportes.id_cidade', '=', idCity)
-        .select([
-          'transportes.id',
-          'transportes.cidade_origem',
-          'transportes.cidade_destino',
-          'transportes.dia_semana',
-          'transportes.local_origem',
-          'transportes.horario_saida',
-          'transportes.horario_chegada',
-          'transportes.preco',
-          'veiculos.nome as veiculo',
-          'empresas.nome_fantasia as empresa',
-        ])
-        .limit(limit)
-        .offset(page * limit);
-
-      if (where) {
-        query = query.where(where);
-      }
-
-      query.compile();
-
-      const { rows } = await this.db.executeQuery(query);
-
-      return rows;
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException({
-        message: 'Erro ao buscar transportes',
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-      });
-    }
-  }
-
   async create(route: Route) {
     try {
       return await this.db.transaction().execute(async (trx) => {
@@ -230,22 +179,6 @@ export class RoutesRepository {
       console.error(error);
       throw new BadRequestException({
         message: 'Erro ao deletar rotas',
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-      });
-    }
-  }
-
-  async findAllTransportsByCityId(idCity: string) {
-    try {
-      return await this.db
-        .selectFrom('transportes')
-        .selectAll()
-        .where('id_cidade', '=', idCity)
-        .execute();
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException({
-        message: 'Erro ao buscar transportes por cidade',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }

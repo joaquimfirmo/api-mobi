@@ -81,70 +81,70 @@ describe('RoutesRepository', () => {
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
   });
 
-  it.skip('should call findAllTransportsByCityId method', async () => {
-    await repository.findAllTransportsByCityId('1');
-    expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
-      'id_cidade',
-      '=',
-      '1',
-    );
+  // it.skip('should call findAllTransportsByCityId method', async () => {
+  //   await repository.findAllTransportsByCityId('1');
+  //   expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
+  //     'id_cidade',
+  //     '=',
+  //     '1',
+  //   );
 
-    expect(db.selectFrom('transportes').selectAll().execute).toHaveBeenCalled();
-  });
+  //   expect(db.selectFrom('transportes').selectAll().execute).toHaveBeenCalled();
+  // });
 
-  it.skip('should call findByCityId method with the correct filters ', async () => {
-    const spy = jest.spyOn(repository, 'generateWhereClause');
+  // it.skip('should call findByCityId method with the correct filters ', async () => {
+  //   const spy = jest.spyOn(repository, 'generateWhereClause');
 
-    await repository.findByCityId('1', 0, 20, {
-      day: '1',
-      hour: '12:00',
-      city_destination: '1',
-    });
+  //   await repository.findByCityId('1', 0, 20, {
+  //     day: '1',
+  //     hour: '12:00',
+  //     city_destination: '1',
+  //   });
 
-    expect(spy).toHaveBeenCalledWith('1', '12:00', '1');
-    expect(
-      db.selectFrom('transportes').selectAll().innerJoin,
-    ).toHaveBeenCalledWith('veiculos', 'veiculos.id', 'transportes.id_veiculo');
-    expect(
-      db.selectFrom('transportes').selectAll().innerJoin,
-    ).toHaveBeenCalledWith('empresas', 'empresas.id', 'transportes.id_empresa');
-    expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
-      'transportes.id_cidade',
-      '=',
-      '1',
-    );
-    expect(db.selectFrom('transportes').selectAll().limit).toHaveBeenCalledWith(
-      20,
-    );
-    expect(
-      db.selectFrom('transportes').selectAll().offset,
-    ).toHaveBeenCalledWith(0);
-    expect(db.selectFrom('transportes').compile).toHaveBeenCalled();
-  });
+  //   expect(spy).toHaveBeenCalledWith('1', '12:00', '1');
+  //   expect(
+  //     db.selectFrom('transportes').selectAll().innerJoin,
+  //   ).toHaveBeenCalledWith('veiculos', 'veiculos.id', 'transportes.id_veiculo');
+  //   expect(
+  //     db.selectFrom('transportes').selectAll().innerJoin,
+  //   ).toHaveBeenCalledWith('empresas', 'empresas.id', 'transportes.id_empresa');
+  //   expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
+  //     'transportes.id_cidade',
+  //     '=',
+  //     '1',
+  //   );
+  //   expect(db.selectFrom('transportes').selectAll().limit).toHaveBeenCalledWith(
+  //     20,
+  //   );
+  //   expect(
+  //     db.selectFrom('transportes').selectAll().offset,
+  //   ).toHaveBeenCalledWith(0);
+  //   expect(db.selectFrom('transportes').compile).toHaveBeenCalled();
+  // });
 
-  it.skip('should call findByCityId method without filters', async () => {
-    const spy = jest.spyOn(repository, 'generateWhereClause');
+  // it.skip('should call findByCityId method without filters', async () => {
+  //   const spy = jest.spyOn(repository, 'generateWhereClause');
 
-    await repository.findByCityId('1', 0, 20, {});
+  //   await repository.findByCityId('1', 0, 20, {});
 
-    expect(spy).toHaveBeenCalledWith(undefined, undefined, undefined);
-    expect(
-      db.selectFrom('transportes').selectAll().innerJoin,
-    ).toHaveBeenCalledWith('veiculos', 'veiculos.id', 'transportes.id_veiculo');
-    expect(
-      db.selectFrom('transportes').selectAll().innerJoin,
-    ).toHaveBeenCalledWith('empresas', 'empresas.id', 'transportes.id_empresa');
-    expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
-      'transportes.id_cidade',
-      '=',
-      '1',
-    );
-    expect(db.selectFrom('transportes').selectAll().limit).toHaveBeenCalledWith(
-      20,
-    );
-    expect(
-      db.selectFrom('transportes').selectAll().offset,
-    ).toHaveBeenCalledWith(0);
-    expect(db.selectFrom('transportes').compile).toHaveBeenCalled();
-  });
+  //   expect(spy).toHaveBeenCalledWith(undefined, undefined, undefined);
+  //   expect(
+  //     db.selectFrom('transportes').selectAll().innerJoin,
+  //   ).toHaveBeenCalledWith('veiculos', 'veiculos.id', 'transportes.id_veiculo');
+  //   expect(
+  //     db.selectFrom('transportes').selectAll().innerJoin,
+  //   ).toHaveBeenCalledWith('empresas', 'empresas.id', 'transportes.id_empresa');
+  //   expect(db.selectFrom('transportes').selectAll().where).toHaveBeenCalledWith(
+  //     'transportes.id_cidade',
+  //     '=',
+  //     '1',
+  //   );
+  //   expect(db.selectFrom('transportes').selectAll().limit).toHaveBeenCalledWith(
+  //     20,
+  //   );
+  //   expect(
+  //     db.selectFrom('transportes').selectAll().offset,
+  //   ).toHaveBeenCalledWith(0);
+  //   expect(db.selectFrom('transportes').compile).toHaveBeenCalled();
+  // });
 });
