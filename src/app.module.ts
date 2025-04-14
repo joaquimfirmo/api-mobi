@@ -9,6 +9,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
 import { RoutesModule } from './route/routes.module';
 import { UsersModule } from './users/users.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { TransportsModule } from './transports/transports.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ScheduleModule } from './schedule/schedule.module';
     RoutesModule,
     UsersModule,
     ScheduleModule,
+    TransportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
