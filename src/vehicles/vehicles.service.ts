@@ -6,14 +6,14 @@ import {
 } from '@nestjs/common';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
-import { VehicleRepository } from './vehicles.repository';
+import { VehiclesRepository } from './vehicles.repository';
 import { Vehicle } from './entities/vehicle.entity';
 
 @Injectable()
 export class VehiclesService {
   constructor(
     private readonly logger: Logger,
-    private readonly vehicleRepository: VehicleRepository,
+    private readonly vehicleRepository: VehiclesRepository,
   ) {}
 
   async create(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
