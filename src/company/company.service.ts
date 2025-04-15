@@ -7,7 +7,7 @@ import {
 import { CompanyRepository } from './company.repository';
 import { CityService } from '../city/city.service';
 import Company from './entities/company.entity';
-import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dtos';
+import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dto';
 
 @Injectable()
 export class CompanyService {

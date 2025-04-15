@@ -7,7 +7,7 @@ import {
 import { Kysely, sql } from 'kysely';
 import { Database } from 'src/common/database/types';
 import Company from './entities/company.entity';
-import { UpdateCompanyRequestDTO } from './dtos';
+import { UpdateCompanyRequestDTO } from './dto';
 
 @Injectable()
 export class CompanyRepository {

@@ -13,7 +13,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CompanyService } from './company.service';
 import Company from './entities/company.entity';
-import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dtos';
+import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dto';
 
 @Controller('empresas')
 @UseGuards(RolesGuard)
