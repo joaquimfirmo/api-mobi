@@ -1,14 +1,14 @@
 import { Module, Logger, Scope } from '@nestjs/common';
 import { INQUIRER } from '@nestjs/core';
 import { VehiclesService } from './vehicles.service';
-import { VehicleRepository } from './vehicles.repository';
+import { VehiclesRepository } from './vehicles.repository';
 import { VehiclesController } from './vehicles.controller';
 
 @Module({
   controllers: [VehiclesController],
   providers: [
     VehiclesService,
-    VehicleRepository,
+    VehiclesRepository,
     {
       provide: Logger,
       scope: Scope.TRANSIENT,
