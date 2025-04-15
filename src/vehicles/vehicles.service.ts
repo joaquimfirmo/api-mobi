@@ -3,6 +3,7 @@ import {
   Logger,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
@@ -19,28 +20,35 @@ export class VehiclesService {
   async create(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
     this.logger.log(`Criando veículo: ${JSON.stringify(createVehicleDto)}`);
 
-    const vehicleExists = await this.vehicleRepository.findByName(
-      createVehicleDto.nome,
-    );
-    if (vehicleExists.length > 0) {
-      this.logger.warn(
-        `Veículo com o nome: ${createVehicleDto.nome} já existe`,
+    await this.ensureVehicleDoesNotExist(createVehicleDto.nome);
+
+    const vehicle = new Vehicle(createVehicleDto.nome);
+
+    try {
+      const [result] = await this.vehicleRepository.create(vehicle);
+      this.logger.log(
+        `Veículo: ${JSON.stringify(createVehicleDto)} criado com sucesso`,
       );
-      throw new BadRequestException(
-        `Veículo com o nome: ${createVehicleDto.nome} já existe`,
+      return new Vehicle(
+        result.nome,
+        result.id,
+        result.created_at,
+        result.updated_at,
+      );
+    } catch (error) {
+      this.logger.error('Erro ao criar veículo', error);
+      throw new InternalServerErrorException(
+        `Erro interno ao tentar salvar o veículo`,
       );
     }
-    const vehicle = new Vehicle(createVehicleDto.nome);
-    this.logger.log(
-      `Veículo: ${JSON.stringify(createVehicleDto)} criado com sucesso`,
-    );
-    const [result] = await this.vehicleRepository.create(vehicle);
-    return new Vehicle(
-      result.nome,
-      result.id,
-      result.created_at,
-      result.updated_at,
-    );
+  }
+
+  private async ensureVehicleDoesNotExist(nome: string): Promise<void> {
+    const vehicleExists = await this.vehicleRepository.findByName(nome);
+    if (vehicleExists.length > 0) {
+      this.logger.warn(`Veículo com o nome: ${nome} já existe`);
+      throw new BadRequestException(`Veículo com o nome: ${nome} já existe`);
+    }
   }
 
   findAll(): Promise<Vehicle[]> {
