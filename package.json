@@ -75,7 +75,6 @@
       "!**/dist/**",
       "!**/dto/**",
       "!**/*.module.ts"
-
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
