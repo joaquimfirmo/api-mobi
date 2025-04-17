@@ -20,7 +20,18 @@ export class VehiclesService {
   async create(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
     this.logger.log(`Criando veículo: ${JSON.stringify(createVehicleDto)}`);
 
-    await this.ensureVehicleDoesNotExist(createVehicleDto.nome);
+    const vehicleExists = await this.verifyVehicleExist({
+      nome: createVehicleDto.nome,
+    });
+
+    if (vehicleExists) {
+      this.logger.error(
+        `Veículo com o nome: ${createVehicleDto.nome} já existe`,
+      );
+      throw new BadRequestException(
+        `Veículo com o nome: ${createVehicleDto.nome} já existe`,
+      );
+    }
 
     const vehicle = new Vehicle(createVehicleDto.nome);
 
@@ -43,59 +54,115 @@ export class VehiclesService {
     }
   }
 
-  private async ensureVehicleDoesNotExist(nome: string): Promise<void> {
-    const vehicleExists = await this.vehicleRepository.findByName(nome);
-    if (vehicleExists.length > 0) {
-      this.logger.warn(`Veículo com o nome: ${nome} já existe`);
-      throw new BadRequestException(`Veículo com o nome: ${nome} já existe`);
-    }
-  }
-
   findAll(): Promise<Vehicle[]> {
-    return this.vehicleRepository.findAll();
+    try {
+      return this.vehicleRepository.findAll();
+    } catch (error) {
+      this.logger.error('Erro ao buscar veículos', error);
+      throw new InternalServerErrorException(
+        `Erro interno ao tentar buscar os veículos`,
+      );
+    }
   }
 
   async findOne(id: string): Promise<Vehicle> {
-    const [vehicle] = await this.vehicleRepository.findById(id);
-    if (!vehicle) {
-      throw new NotFoundException(
-        `Veículo com o ID:${id} informado não foi encontrado`,
+    try {
+      const [vehicle] = await this.vehicleRepository.findById(id);
+      if (!vehicle) {
+        throw new NotFoundException(
+          `Veículo com o ID:${id} informado não foi encontrado`,
+        );
+      }
+
+      return new Vehicle(
+        vehicle.nome,
+        vehicle.id,
+        vehicle.created_at,
+        vehicle.updated_at,
+      );
+    } catch (error) {
+      this.logger.error('Erro ao buscar veículo', error);
+      throw new InternalServerErrorException(
+        `Erro interno ao tentar buscar o veículo com o ID: ${id}`,
       );
     }
-
-    return new Vehicle(
-      vehicle.nome,
-      vehicle.id,
-      vehicle.created_at,
-      vehicle.updated_at,
-    );
   }
 
   async update(
     id: string,
     updateVehicleDto: UpdateVehicleDto,
   ): Promise<Vehicle> {
-    const vehicleExists = await this.vehicleRepository.findById(id);
-    if (vehicleExists.length === 0) {
-      this.logger.warn(`Veículo com o ID: ${id} não foi encontrado`);
+    const vehicleExists = await this.verifyVehicleExist({
+      id,
+    });
+    if (!vehicleExists) {
+      this.logger.error(`Veículo com o ID:${id} informado não foi encontrado`);
       throw new NotFoundException(
         `Veículo com o ID:${id} informado não foi encontrado`,
       );
     }
-    this.logger.log(`Atualizando veículo com id: ${id}`);
-    return this.vehicleRepository.update(id, updateVehicleDto);
+
+    try {
+      this.logger.log(`Atualizando veículo com id: ${id}`);
+      const updatedVehicle = await this.vehicleRepository.update(
+        id,
+        updateVehicleDto,
+      );
+      this.logger.log(`Veículo com id: ${id} atualizado com sucesso`);
+      return updatedVehicle;
+    } catch (error) {
+      this.logger.error(`Erro ao atualizar veículo com id: ${id}`, error);
+      throw new InternalServerErrorException(
+        `Erro interno ao tentar atualizar o veículo com o ID: ${id}`,
+      );
+    }
   }
 
-  async remove(id: string) {
-    const vehicleExists = await this.vehicleRepository.findById(id);
-    if (vehicleExists.length === 0) {
-      this.logger.warn(`Veículo com o ID: ${id} não foi encontrado`);
+  async remove(id: string): Promise<void> {
+    const vehicleExists = await this.verifyVehicleExist({
+      id,
+    });
+    if (!vehicleExists) {
+      this.logger.error(`Veículo com o ID:${id} informado não foi encontrado`);
       throw new NotFoundException(
         `Veículo com o ID:${id} informado não foi encontrado`,
       );
     }
-
     this.logger.log(`Removendo veículo com id: ${id}`);
-    return this.vehicleRepository.delete(id);
+
+    try {
+      await this.vehicleRepository.delete(id);
+      this.logger.log(`Veículo com id: ${id} removido com sucesso`);
+    } catch (error) {
+      this.logger.error(`Erro ao remover veículo com id: ${id}`, error);
+      throw new InternalServerErrorException(
+        `Erro interno ao tentar remover o veículo com o ID: ${id}`,
+      );
+    }
+  }
+
+  private async verifyVehicleExist(criteria: {
+    id?: string;
+    nome?: string;
+  }): Promise<boolean> {
+    if (criteria.id) {
+      return await this.checkVehicleById(criteria.id);
+    }
+
+    if (criteria.nome) {
+      return await this.checkVehicleByName(criteria.nome);
+    }
+
+    return false;
+  }
+
+  private async checkVehicleById(id: string): Promise<boolean> {
+    const vehicle = await this.vehicleRepository.findById(id);
+    return vehicle.length > 0;
+  }
+
+  private async checkVehicleByName(nome: string): Promise<boolean> {
+    const vehicleExists = await this.vehicleRepository.findByName(nome);
+    return vehicleExists.length > 0;
   }
 }
