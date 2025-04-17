@@ -1,4 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { TransportsRepository } from './transports.repository';
 
 @Injectable()
@@ -20,8 +24,9 @@ export class TransportsService {
       );
       return result;
     } catch (error) {
-      this.logger.error(
-        `Error fetching transports: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      this.logger.error('Error fetching transports', error);
+      throw new InternalServerErrorException(
+        `Internal server error while fetching transports`,
       );
     }
   }
