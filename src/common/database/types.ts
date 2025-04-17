@@ -1,4 +1,5 @@
-import { ColumnType } from 'kysely';
+import { ColumnType, Selectable } from 'kysely';
+import { DiasSemana } from '../../types/diasSemana.type';
 
 export interface Database {
   empresas: EmpresaTable;
@@ -38,15 +39,6 @@ export interface CidadeTable {
   updated_at: ColumnType<Date, string | undefined, null>;
 }
 
-export type DiasSemana =
-  | 'Domingo'
-  | 'Segunda-feira'
-  | 'Terça-feira'
-  | 'Quarta-feira'
-  | 'Quinta-feira'
-  | 'Sexta-feira'
-  | 'Sábado';
-
 export interface HorariosTable {
   id: ColumnType<string, string>;
   dia_semana: DiasSemana;
@@ -56,6 +48,8 @@ export interface HorariosTable {
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, null>;
 }
+
+export type Schedules = Selectable<HorariosTable>;
 
 export interface RotasTable {
   id: ColumnType<string, string>;
