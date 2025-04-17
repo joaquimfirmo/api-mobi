@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Logger, Scope } from '@nestjs/common';
 import { TransportsService } from './transports.service';
 import { TransportsRepository } from './transports.repository';
-import { DiaSemana } from './dto/filters-transport.dto';
+import { DiasSemana } from '../types/enums/dias-semana.enum';
 
 describe('TransportsService', () => {
   let service: TransportsService;
@@ -56,7 +56,7 @@ describe('TransportsService', () => {
   it('should call findAll method from repository', async () => {
     jest.spyOn(repository, 'findAll').mockResolvedValueOnce(mockTransports);
     const filters = {
-      DiaSemana: DiaSemana.SegundaFeira,
+      DiaSemana: DiasSemana.SegundaFeira,
     };
 
     const result = await service.findAll(filters, 1, 10);
@@ -70,17 +70,23 @@ describe('TransportsService', () => {
   });
 
   it('should log error when findAll fails', async () => {
+    const filters = {
+      DiaSemana: DiasSemana.SegundaFeira,
+    };
     const errorMessage = 'Error fetching transports';
     jest
       .spyOn(repository, 'findAll')
       .mockRejectedValueOnce(new Error(errorMessage));
-    const filters = {
-      DiaSemana: DiaSemana.SegundaFeira,
-    };
+    jest.spyOn(logger, 'error').mockImplementation(() => {});
 
-    await service.findAll(filters, 1, 10);
-    expect(logger.error).toHaveBeenCalledWith(
-      `Error fetching transports: ${errorMessage}`,
+    await expect(service.findAll(filters, 1, 10)).rejects.toThrow(
+      `Internal server error while fetching transports`,
     );
+
+    expect(logger.error).toHaveBeenCalledWith(
+      'Error fetching transports',
+      expect.any(Error),
+    );
+    expect(logger.error).toHaveBeenCalledTimes(1);
   });
 });
