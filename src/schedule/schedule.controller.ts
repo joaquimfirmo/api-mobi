@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Query,
+  HttpCode,
 } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -18,8 +20,12 @@ export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Get()
-  findAll() {
-    return this.scheduleService.findAll();
+  findAll(
+    @Query()
+    queryParams: any,
+  ) {
+    const { page = 0, limit = 25, ...filters } = queryParams;
+    return this.scheduleService.findAll(filters, page, limit);
   }
   @Post('horario')
   create(@Body() createScheduleDto: CreateScheduleDto) {
@@ -48,6 +54,7 @@ export class ScheduleController {
   }
 
   @Delete('horario/:id')
+  @HttpCode(204)
   remove(
     @Param(
       'id',
