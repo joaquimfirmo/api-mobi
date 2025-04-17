@@ -73,8 +73,8 @@ describe('VehiclesController', () => {
 
   it('should call remove method from service', async () => {
     const id = '1';
-    jest.spyOn(service, 'remove').mockResolvedValueOnce(mockVehicles[0]);
-    expect(await controller.remove(id)).toBe(mockVehicles[0]);
+    jest.spyOn(service, 'remove');
+    expect(await controller.remove(id)).toBeUndefined();
     expect(service.remove).toHaveBeenCalledWith(id);
   });
 });

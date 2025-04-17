@@ -107,7 +107,7 @@ describe('VehiclesService', () => {
     );
     expect(repository.findByName).toHaveBeenCalledWith(createVehicleDto.nome);
     expect(repository.create).not.toHaveBeenCalled();
-    expect(logger.warn).toHaveBeenCalledWith(
+    expect(logger.error).toHaveBeenCalledWith(
       `Veículo com o nome: ${createVehicleDto.nome} já existe`,
     );
   });
@@ -142,8 +142,8 @@ describe('VehiclesService', () => {
     );
     expect(repository.findById).toHaveBeenCalledWith(vehicleId);
     expect(repository.update).not.toHaveBeenCalled();
-    expect(logger.warn).toHaveBeenCalledWith(
-      `Veículo com o ID: ${vehicleId} não foi encontrado`,
+    expect(logger.error).toHaveBeenCalledWith(
+      `Veículo com o ID:${vehicleId} informado não foi encontrado`,
     );
   });
 
@@ -154,10 +154,41 @@ describe('VehiclesService', () => {
     });
 
     jest.spyOn(repository, 'findById').mockResolvedValueOnce([mockVehicles[0]]);
-    const vehicle = await service.remove(vehicleId);
-    expect(vehicle).toEqual({
-      id: vehicleId,
-    });
+    await service.remove(vehicleId);
     expect(repository.delete).toHaveBeenCalledWith(vehicleId);
+    expect(logger.log).toHaveBeenCalledWith(
+      `Removendo veículo com id: ${vehicleId}`,
+    );
+    expect(logger.log).toHaveBeenCalledWith(
+      `Veículo com id: ${vehicleId} removido com sucesso`,
+    );
+  });
+
+  describe('verifyVehicle', () => {
+    it('should call checkVehicleById method', async () => {
+      const vehicleId = '1';
+      jest
+        .spyOn(service as any, 'checkVehicleById')
+        .mockResolvedValueOnce(true);
+      const result = await (service as any).verifyVehicleExist({
+        id: vehicleId,
+      });
+      expect(result).toBe(true);
+      expect((service as any).checkVehicleById).toHaveBeenCalledWith(vehicleId);
+    });
+
+    it('should call checkVehicleByName method', async () => {
+      const vehicleName = 'Carro A';
+      jest
+        .spyOn(service as any, 'checkVehicleByName')
+        .mockResolvedValueOnce(true);
+      const result = await (service as any).verifyVehicleExist({
+        nome: vehicleName,
+      });
+      expect(result).toBe(true);
+      expect((service as any).checkVehicleByName).toHaveBeenCalledWith(
+        vehicleName,
+      );
+    });
   });
 });
