@@ -1,18 +1,9 @@
 import { IsOptional, IsUUID, IsNumber, IsEnum, Matches } from 'class-validator';
-import { DiasSemana } from 'src/common/database/types';
+import { DiasSemana } from '../../types/enums/dias-semana.enum';
 
-export enum DiaSemana {
-  Domingo = 'Domingo',
-  SegundaFeira = 'Segunda-feira',
-  TercaFeira = 'Terça-feira',
-  QuartaFeira = 'Quarta-feira',
-  QuintaFeira = 'Quinta-feira',
-  SextaFeira = 'Sexta-feira',
-  Sabado = 'Sábado',
-}
 export class FiltersTransportDto {
   @IsOptional()
-  @IsEnum(DiaSemana, {
+  @IsEnum(DiasSemana, {
     message:
       'O dia da semana deve ser um dos seguintes: Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira ou Sábado.',
   })
