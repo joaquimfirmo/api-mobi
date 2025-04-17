@@ -1,7 +1,9 @@
 import { randomUUID } from 'crypto';
+import { DiasSemana } from '../../types/diasSemana.type';
 
 export class Schedule {
   public readonly id: string;
+  public readonly diaSemana: DiasSemana;
   public readonly horaPartida: string;
   public readonly horaChegada: string;
   public readonly idRota: string;
@@ -9,6 +11,7 @@ export class Schedule {
   public readonly updatedAt: Date | string | null;
 
   constructor(
+    diaSemana: DiasSemana,
     horaPartida: string,
     horaChegada: string,
     idRota: string,
@@ -17,6 +20,7 @@ export class Schedule {
     updatedAt?: Date | string | null,
   ) {
     this.id = id || randomUUID();
+    this.diaSemana = diaSemana;
     this.horaPartida = horaPartida;
     this.horaChegada = horaChegada;
     this.idRota = idRota;
