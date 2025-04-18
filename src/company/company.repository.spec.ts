@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyRepository } from './company.repository';
 import { Kysely } from 'kysely';
-import { Database } from 'src/common/database/types';
+import { Database } from '../common/database/types';
 
 describe('CompanyRepository', () => {
   let repository: CompanyRepository;

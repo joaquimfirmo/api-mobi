@@ -9,6 +9,7 @@ import { ScheduleService } from './schedule.service';
 import { ScheduleRepository } from './schedule.repository';
 import { ScheduleMapper } from './mapper/schedule.mapper';
 import { DiasSemana } from '../types/enums/dias-semana.enum';
+import { Schedule } from './entities/schedule.entity';
 
 describe('ScheduleService', () => {
   let service: ScheduleService;
@@ -41,6 +42,8 @@ describe('ScheduleService', () => {
             findScheduleByHoursAndRoute: jest.fn(),
             create: jest.fn(),
             findAll: jest.fn(),
+            findById: jest.fn(),
+            update: jest.fn(),
             delete: jest.fn(),
           },
         },
@@ -164,6 +167,283 @@ describe('ScheduleService', () => {
     });
   });
 
+  describe('findAll', () => {
+    it('should find all schedules with filters', async () => {
+      const filters = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+      };
+      const page = 1;
+      const limit = 10;
+      jest.spyOn(repository, 'findAll').mockResolvedValueOnce([
+        ScheduleMapper.toDomain({
+          id: 'fake-id',
+          dia_semana: mockCreateScheduleDto.diaSemana,
+          hora_partida: mockCreateScheduleDto.horaPartida,
+          hora_chegada: mockCreateScheduleDto.horaChegada,
+          id_rota: mockCreateScheduleDto.idRota,
+          created_at: new Date(),
+          updated_at: new Date(),
+        }),
+      ]);
+      const result = await service.findAll(filters, page, limit);
+      expect(repository.findAll).toHaveBeenCalledWith(
+        ScheduleMapper.toPersistence(filters),
+        page,
+        limit,
+      );
+      expect(repository.findAll).toHaveBeenCalledTimes(1);
+      expect(logger.log).toHaveBeenCalledWith(
+        `Buscando horários com os filtros: ${JSON.stringify(filters)}`,
+      );
+      expect(result).toEqual([
+        {
+          id: expect.any(String),
+          diaSemana: mockCreateScheduleDto.diaSemana,
+          horaPartida: mockCreateScheduleDto.horaPartida,
+          horaChegada: mockCreateScheduleDto.horaChegada,
+          idRota: mockCreateScheduleDto.idRota,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+        },
+      ]);
+    });
+
+    it('should throw InternalServerErrorException on repository error', async () => {
+      const filters = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+      };
+      const page = 1;
+      const limit = 10;
+      const errorMessage = 'Error fetching schedules';
+      jest
+        .spyOn(repository, 'findAll')
+        .mockRejectedValueOnce(new Error(errorMessage));
+      await expect(service.findAll(filters, page, limit)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        `Erro ao buscar horários com os filtros: ${JSON.stringify(filters)}`,
+        expect.any(Error),
+      );
+    });
+  });
+
+  describe('findOne', () => {
+    it('should find a schedule by ID', async () => {
+      const id = 'fake-id';
+      const schedule = new Schedule(
+        DiasSemana.SegundaFeira,
+        '08:00:00',
+        '10:00:00',
+        '123',
+      );
+      jest.spyOn(repository, 'findById').mockResolvedValueOnce(schedule);
+      const result = await service.findOne(id);
+      expect(repository.findById).toHaveBeenCalledWith(id);
+      expect(result).toEqual(schedule);
+    });
+
+    it('should throw NotFoundException if schedule does not exist', async () => {
+      const id = 'fake-id';
+      jest.spyOn(repository, 'findById').mockResolvedValueOnce(null);
+      await expect(service.findOne(id)).rejects.toThrow(
+        `Horário com o ID:${id} informado não foi encontrado`,
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        `Horário com o ID:${id} informado não foi encontrado`,
+      );
+    });
+  });
+
+  describe('update', () => {
+    it('should update a schedule successfully', async () => {
+      const schedule = new Schedule(
+        DiasSemana.SegundaFeira,
+        '08:00:00',
+        '10:00:00',
+        '123',
+      );
+      jest.spyOn(repository, 'findById').mockResolvedValueOnce(schedule);
+      jest
+        .spyOn(service as any, 'checkScheduleExists')
+        .mockResolvedValueOnce(true);
+      jest
+        .spyOn(service as any, 'validateUpdatePayload')
+        .mockReturnValueOnce(undefined);
+
+      const id = 'fake-id';
+      const updateScheduleDto = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+        id: 'fake-id',
+      };
+      const scheduleExistsSpy = jest
+        .spyOn(service as any, 'checkScheduleExists')
+        .mockResolvedValueOnce(true);
+
+      jest.spyOn(repository, 'update').mockResolvedValueOnce(schedule);
+
+      const result = await service.update(id, updateScheduleDto);
+      expect(service['validateUpdatePayload']).toHaveBeenCalledWith(
+        updateScheduleDto,
+      );
+      expect(service['checkScheduleExists']).toHaveBeenCalledWith({ id });
+      expect(scheduleExistsSpy).toHaveBeenCalledWith({ id });
+      expect(repository.update).toHaveBeenCalledWith(
+        id,
+        ScheduleMapper.toPersistence(updateScheduleDto),
+      );
+
+      expect(logger.log).toHaveBeenCalledWith(
+        `Atualizando horário: ${JSON.stringify(updateScheduleDto)}`,
+      );
+      expect(result).toEqual(schedule);
+    });
+
+    it('should throw NotFoundException if schedule does not exist', async () => {
+      const id = 'fake-id';
+      jest
+        .spyOn(service as any, 'checkScheduleExists')
+        .mockResolvedValueOnce(false);
+      jest
+        .spyOn(service as any, 'validateUpdatePayload')
+        .mockReturnValueOnce(undefined);
+      await expect(service.update(id, {})).rejects.toThrow(
+        `Horário com o ID:fake-id informado para atualização não foi encontrado`,
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        `Horário com o ID:${id} informado não foi encontrado`,
+      );
+    });
+
+    it('should throw BadRequestException if no data is provided', async () => {
+      const id = 'fake-id';
+      const updateScheduleDto = {};
+      jest.spyOn(service as any, 'validateUpdatePayload');
+      await expect(service.update(id, updateScheduleDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(service['validateUpdatePayload']).toHaveBeenCalledWith(
+        updateScheduleDto,
+      );
+      expect(logger.warn).toHaveBeenCalledWith(
+        `Nenhum dado para atualização foi informado`,
+      );
+    });
+
+    it('should throw InternalServerErrorException on repository error', async () => {
+      const id = 'fake-id';
+      const updateScheduleDto = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+      };
+      const errorMessage = 'Error updating schedule';
+
+      jest
+        .spyOn(service as any, 'checkScheduleExists')
+        .mockResolvedValueOnce(true);
+      jest
+        .spyOn(repository, 'update')
+        .mockRejectedValueOnce(new Error(errorMessage));
+      await expect(service.update(id, updateScheduleDto)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        `Erro ao atualizar horário com ID:${id}`,
+        expect.any(Error),
+      );
+    });
+
+    it('should throw InternalServerErrorException on repository error code 23505', async () => {
+      const id = 'fake-id';
+      const updateScheduleDto = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+      };
+
+      jest
+        .spyOn(service as any, 'checkScheduleExists')
+        .mockResolvedValueOnce(true);
+      jest.spyOn(repository, 'update').mockRejectedValueOnce({ code: '23505' });
+      await expect(service.update(id, updateScheduleDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        `Os novos dados informados formam um horário duplicado: ${JSON.stringify(
+          updateScheduleDto,
+        )}`,
+      );
+    });
+  });
+
+  describe('checkScheduleExists', () => {
+    it('should return true if schedule exists', async () => {
+      const criteria = { id: 'fake-id' };
+      jest
+        .spyOn(repository, 'findById')
+        .mockResolvedValueOnce(
+          new Schedule(DiasSemana.SegundaFeira, '08:00:00', '10:00:00', '123'),
+        );
+      const result = await service['checkScheduleExists'](criteria);
+      expect(result).toBe(true);
+    });
+
+    it('should return false if schedule does not exist', async () => {
+      const criteria = { id: 'fake-id' };
+      jest.spyOn(repository, 'findById').mockResolvedValueOnce(null);
+      const result = await service['checkScheduleExists'](criteria);
+      expect(result).toBe(false);
+    });
+
+    it('should return true if schedule exists by hours and route', async () => {
+      const criteria = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+      };
+      jest
+        .spyOn(repository, 'findScheduleByHoursAndRoute')
+        .mockResolvedValueOnce(
+          ScheduleMapper.toDomain({
+            id: 'fake-id',
+            dia_semana: criteria.diaSemana,
+            hora_partida: criteria.horaPartida,
+            hora_chegada: criteria.horaChegada,
+            id_rota: criteria.idRota,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }),
+        );
+      const result = await service['checkScheduleExists'](criteria);
+      expect(result).toBe(true);
+    });
+    it('should return false if schedule does not exist by hours and route', async () => {
+      const criteria = {
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: '08:00:00',
+        horaChegada: '10:00:00',
+        idRota: '123',
+      };
+      jest
+        .spyOn(repository, 'findScheduleByHoursAndRoute')
+        .mockResolvedValueOnce(null);
+      const result = await service['checkScheduleExists'](criteria);
+      expect(result).toBe(false);
+    });
+  });
   describe('validateUpdatePayload', () => {
     it('should throw BadRequestException if no data is provided', () => {
       const updateScheduleDto = {};
