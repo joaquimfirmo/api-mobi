@@ -40,9 +40,15 @@ export class ScheduleRepository {
 
     return null;
   }
-  async findScheduleByHoursAndRoute(criteria: Partial<Schedules>) {
+  async findScheduleByHoursAndRoute(
+    criteria: Partial<Schedules>,
+  ): Promise<Schedule | null> {
     const query = this.buildQuery(criteria);
-    return await query.selectAll().execute();
+    const [result] = await query.selectAll().execute();
+    if (result?.created_at) {
+      return ScheduleMapper.toDomain(result);
+    }
+    return null;
   }
 
   async create(schedule: Partial<Schedules>): Promise<Schedule> {
@@ -70,9 +76,8 @@ export class ScheduleRepository {
     return ScheduleMapper.toDomain(record);
   }
 
-  async update(id: string, schedule: Partial<Schedules>) {
-    console.log('schedule', schedule);
-    return await this.db.transaction().execute(async (trx) => {
+  async update(id: string, schedule: Partial<Schedules>): Promise<Schedule> {
+    const result = await this.db.transaction().execute(async (trx) => {
       return await trx
         .updateTable('horarios')
         .set({
@@ -94,6 +99,8 @@ export class ScheduleRepository {
         ])
         .executeTakeFirstOrThrow();
     });
+
+    return ScheduleMapper.toDomain(result);
   }
 
   async delete(id: string) {

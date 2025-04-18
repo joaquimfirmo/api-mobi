@@ -87,18 +87,13 @@ export class ScheduleService {
       );
     }
 
-    const schedule = new Schedule(
-      updateScheduleDto.diaSemana,
-      updateScheduleDto.horaPartida,
-      updateScheduleDto.horaChegada,
-      updateScheduleDto.idRota,
-    );
-
     try {
-      this.logger.log(`Atualizando horário: ${JSON.stringify(schedule)}`);
+      this.logger.log(
+        `Atualizando horário: ${JSON.stringify(updateScheduleDto)}`,
+      );
       return await this.scheduleRepository.update(
         id,
-        ScheduleMapper.toPersistence(schedule),
+        ScheduleMapper.toPersistence(updateScheduleDto),
       );
     } catch (error) {
       if ((error as any).code === '23505') {
@@ -109,6 +104,7 @@ export class ScheduleService {
           `Os novos dados informados já existem para outro horário`,
         );
       }
+      this.logger.error(`Erro ao atualizar horário com ID:${id}`, error);
       throw new InternalServerErrorException('Erro ao atualizar o horário');
     }
   }
@@ -138,7 +134,7 @@ export class ScheduleService {
           ScheduleMapper.toPersistence(criteria),
         );
 
-      return scheduleExists.length > 0;
+      return !!scheduleExists;
     }
 
     const schedule = await this.scheduleRepository.findById(criteria.id);
