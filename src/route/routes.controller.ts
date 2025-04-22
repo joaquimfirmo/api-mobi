@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  HttpCode,
+  Query,
 } from '@nestjs/common';
-
-import { StringValidationPipe } from '../common/pipes/string-validation.pipe';
 import { Route } from './entities/route.entity';
 import { RoutesService } from './routes.service';
 import { CreateRouteDTO } from './dto/create-route.dto';
@@ -20,8 +20,12 @@ export class RoutesController {
   constructor(private readonly routesService: RoutesService) {}
 
   @Get()
-  findAll() {
-    return this.routesService.findAll();
+  findAll(
+    @Query()
+    queryParams: any,
+  ) {
+    const { page = 0, limit = 25, ...filters } = queryParams;
+    return this.routesService.findAll(filters, page, limit);
   }
 
   @Get('rota/:id')
@@ -37,15 +41,8 @@ export class RoutesController {
     return await this.routesService.findOne(id);
   }
 
-  @Get('rota/:nome/transportes')
-  async findTransportsByRouteName(
-    @Param('nome', StringValidationPipe) routeName: string,
-  ) {
-    return await this.routesService.findAllTransportOptionsByRoute(routeName);
-  }
-
   @Post('rota')
-  create(@Body() createRouteDTO: CreateRouteDTO) {
+  create(@Body() createRouteDTO: CreateRouteDTO): Promise<Route> {
     return this.routesService.create(createRouteDTO);
   }
 
@@ -59,11 +56,12 @@ export class RoutesController {
     )
     id: string,
     @Body() payload: UpdateRouteDTO,
-  ) {
+  ): Promise<Route> {
     return this.routesService.update(id, payload);
   }
 
   @Delete('rota/:id')
+  @HttpCode(204)
   remove(
     @Param(
       'id',
