@@ -1,6 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { TransportsService } from './transports.service';
-import { FiltersTransportDto } from './dto/filters-transport.dto';
 
 @Controller('transportes')
 export class TransportsController {
@@ -9,7 +8,7 @@ export class TransportsController {
   @Get()
   findAll(
     @Query()
-    queryParams: FiltersTransportDto,
+    queryParams: any,
   ) {
     const { page = 0, limit = 25, ...filters } = queryParams;
     return this.transportsService.findAll(filters, page, limit);

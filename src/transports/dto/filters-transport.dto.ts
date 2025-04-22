@@ -1,4 +1,4 @@
-import { IsOptional, IsUUID, IsNumber, IsEnum, Matches } from 'class-validator';
+import { IsOptional, IsUUID, IsEnum, Matches } from 'class-validator';
 import { DiasSemana } from '../../types/enums/dias-semana.enum';
 
 export class FiltersTransportDto {
@@ -22,12 +22,4 @@ export class FiltersTransportDto {
   @IsOptional()
   @IsUUID(4)
   public readonly idCidadeDestino: string;
-
-  @IsOptional()
-  @IsNumber()
-  public readonly page: number;
-
-  @IsOptional()
-  @IsNumber()
-  public readonly limit: number;
 }
