@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { VehicleRepository } from './vehicles.repository';
+import { VehiclesRepository } from './vehicles.repository';
 import { Kysely } from 'kysely';
 import { Database } from 'src/common/database/types';
 
 describe('VehiclesRepository', () => {
-  let repository: VehicleRepository;
+  let repository: VehiclesRepository;
   let db: Kysely<Database>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        VehicleRepository,
+        VehiclesRepository,
         {
           provide: 'DATABASE_CONNECTION',
           useValue: {
@@ -25,7 +25,7 @@ describe('VehiclesRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<VehicleRepository>(VehicleRepository);
+    repository = module.get<VehiclesRepository>(VehiclesRepository);
     db = module.get('DATABASE_CONNECTION');
   });
 
@@ -44,6 +44,17 @@ describe('VehiclesRepository', () => {
       'id',
       '=',
       '1',
+    );
+    expect(db.selectFrom('veiculos').selectAll().limit).toHaveBeenCalledWith(1);
+    expect(db.selectFrom('veiculos').selectAll().execute).toHaveBeenCalled();
+  });
+
+  it('should call findByName method', async () => {
+    await repository.findByName('Nome');
+    expect(db.selectFrom('veiculos').selectAll().where).toHaveBeenCalledWith(
+      'nome',
+      '=',
+      'Nome',
     );
     expect(db.selectFrom('veiculos').selectAll().limit).toHaveBeenCalledWith(1);
     expect(db.selectFrom('veiculos').selectAll().execute).toHaveBeenCalled();

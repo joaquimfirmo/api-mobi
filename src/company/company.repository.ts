@@ -7,7 +7,7 @@ import {
 import { Kysely, sql } from 'kysely';
 import { Database } from 'src/common/database/types';
 import Company from './entities/company.entity';
-import { UpdateCompanyRequestDTO } from './dtos';
+import { UpdateCompanyRequestDTO } from './dto';
 
 @Injectable()
 export class CompanyRepository {
@@ -51,14 +51,14 @@ export class CompanyRepository {
             razao_social: company.razaoSocial,
             nome_fantasia: company.nomeFantasia,
             cnpj: company.cnpj,
-            id_cidade: company.idCidade,
+            email: company.email,
           })
           .returning([
             'id',
             'nome_fantasia',
             'razao_social',
             'cnpj',
-            'id_cidade',
+            'email',
             'created_at',
             'updated_at',
           ])
@@ -84,7 +84,7 @@ export class CompanyRepository {
               nome_fantasia: company.nomeFantasia,
             }),
             ...(company.cnpj && { cnpj: company.cnpj }),
-            ...(company.idCidade && { id_cidade: company.idCidade }),
+            ...(company.email && { id_cidade: company.email }),
             updated_at: sql`now()`,
           })
           .where('id', '=', id)
@@ -93,7 +93,7 @@ export class CompanyRepository {
             'nome_fantasia',
             'razao_social',
             'cnpj',
-            'id_cidade',
+            'email',
             'created_at',
             'updated_at',
           ])

@@ -7,7 +7,7 @@ import {
 import { CompanyRepository } from './company.repository';
 import { CityService } from '../city/city.service';
 import Company from './entities/company.entity';
-import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dtos';
+import { CreateCompanyRequestDTO, UpdateCompanyRequestDTO } from './dto';
 
 @Injectable()
 export class CompanyService {
@@ -25,7 +25,7 @@ export class CompanyService {
           company.razao_social,
           company.nome_fantasia,
           company.cnpj,
-          company.id_cidade,
+          company.email,
           company.id,
           company.created_at,
           company.updated_at,
@@ -46,7 +46,7 @@ export class CompanyService {
       result[0].razao_social,
       result[0].nome_fantasia,
       result[0].cnpj,
-      result[0].id_cidade,
+      result[0].email,
       result[0].id,
       result[0].created_at,
       result[0].updated_at,
@@ -55,12 +55,6 @@ export class CompanyService {
 
   async createCompany(company: CreateCompanyRequestDTO): Promise<Company> {
     this.logger.log(`Criando empresa: ${JSON.stringify(company)}`);
-
-    const cityData = await this.cityService.findOrCreateCity(
-      company.cidade,
-      company.uf,
-      company.codigoCidade,
-    );
 
     const cnpjExists = await this.verifyCnpjExists(company.cnpj);
 
@@ -84,7 +78,7 @@ export class CompanyService {
       company.razaoSocial,
       company.nomeFantasia,
       company.cnpj,
-      cityData.id,
+      company.email,
     );
 
     const result = await this.companyRepository.create(newCompany);
@@ -93,7 +87,7 @@ export class CompanyService {
       result.razao_social,
       result.nome_fantasia,
       result.cnpj,
-      result.id_cidade,
+      result.email,
       result.id,
       result.created_at,
       result.updated_at,
@@ -130,7 +124,7 @@ export class CompanyService {
       updatedCompany.razao_social,
       updatedCompany.nome_fantasia,
       updatedCompany.cnpj,
-      updatedCompany.id_cidade,
+      updatedCompany.email,
       updatedCompany.id,
       updatedCompany.created_at,
       updatedCompany.updated_at,
@@ -141,7 +135,7 @@ export class CompanyService {
     this.logger.log(`Empresa para ser excluida com o ID:${id}`);
     const companyExists = await this.companyRepository.findById(id);
 
-    if (!companyExists) {
+    if (!companyExists.length) {
       throw new NotFoundException(
         `Empresa com o ID:${id} informado não foi encontrada`,
       );

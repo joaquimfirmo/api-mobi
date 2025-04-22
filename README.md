@@ -1,85 +1,182 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 API Mobi
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+**Atenção**: Esta API ainda está em construção 🛠️ e algumas funcionalidades podem não estar 100% completas. Estamos trabalhando para entregar a melhor experiência possível! 🚧
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A **API Mobi** é uma aplicação server-side desenvolvida com o framework [NestJS](https://nestjs.com/). Esta API gerencia informações sobre meios de transporte disponíveis entre cidades, incluindo **rotas**, **horários**, **preços**, **veículos** e **empresas de transporte** que operam em uma determinada região.
 
-## Description
+## 📋 Funcionalidades
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A API Mobi oferece as seguintes funcionalidades:
 
-## Project setup
+- **Gerenciamento de Rotas**:
+
+  - Cadastro, atualização, exclusão e listagem de rotas entre cidades.
+  - Informações detalhadas sobre as rotas, como distância, tempo estimado e via principal.
+
+- **Horários de Transporte**:
+
+  - Consulta de horários disponíveis para rotas específicas.
+  - Filtro por dia da semana e horário.
+
+- **Empresas de Transporte**:
+
+  - Cadastro e gerenciamento de empresas que operam nas rotas.
+  - Associação de empresas a rotas e horários.
+
+- **Veículos**:
+
+  - Cadastro de tipos de veículos (ex.: ônibus, vans, carros).
+  - Associação de veículos a horários e rotas.
+
+- **Consulta de Opções de Transporte**:
+  - Listagem de transportes disponíveis para uma rota específica em um horário específico.
+  - Informações detalhadas sobre a empresa, veículo e horário.
+
+## 🛠️ Tecnologias Utilizadas
+
+A API Mobi foi construída utilizando as seguintes tecnologias:
+
+- **[NestJS](https://nestjs.com/)**: Framework para construção de aplicações server-side escaláveis.
+- **[PostgreSQL](https://www.postgresql.org/)**: Banco de dados relacional utilizado para armazenar as informações.
+- **[Kysely](https://kysely.dev/)**: Query builder para interagir com o banco de dados.
+- **[TypeScript](https://www.typescriptlang.org/)**: Linguagem utilizada para garantir tipagem estática e maior segurança no desenvolvimento.
+- **[Jest](https://jestjs.io/)**: Framework de testes para garantir a qualidade do código.
+- **[ESLint](https://eslint.org/)** e **[Prettier](https://prettier.io/)**: Ferramentas para padronização e formatação do código.
+
+## 📂 Estrutura do Projeto
+
+A estrutura do projeto segue os padrões do NestJS:
+
+```
+.env
+.eslintrc.js
+.gitignore
+.prettierrc
+coverage/
+nest-cli.json
+package.json
+README.md
+src/
+  app.controller.spec.ts
+  app.controller.ts
+  app.module.ts
+  app.service.ts
+  city/
+  common/
+  company/
+  gateway/
+  main.ts
+  route/
+  transports/
+  users/
+  vehicles/
+test/
+tsconfig.build.json
+tsconfig.json
+```
+
+## ⚙️ Configuração do Banco de Dados
+
+A conexão com o banco de dados é configurada no arquivo `database.providers.ts`. Certifique-se de definir as variáveis de ambiente no arquivo `.env`:
+
+```
+BD_USER=<seu_usuario>
+BD_HOST=<seu_host>
+BD_DATABASE=<seu_banco_de_dados>
+BD_PASSWORD=<sua_senha>
+BD_PORT=<sua_porta>
+```
+
+> **Nota**: Este projeto utiliza o banco de dados **PostgreSQL**.
+
+## 🚀 Inicialização da Aplicação
+
+O ponto de entrada da aplicação é o arquivo `main.ts`, que configura o NestJS e inicia o servidor na porta `8080`:
+
+```typescript
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(8080);
+}
+bootstrap();
+```
+
+### 🏗️ Instalação
+
+Certifique-se de ter o [Node.js](https://nodejs.org/) versão 20 instalada.
 
 ```bash
+# Instale as dependências
 $ yarn install
 ```
 
-## Compile and run the project
+### ▶️ Executando a Aplicação
 
 ```bash
-# development
+# Desenvolvimento
 $ yarn run start
 
-# watch mode
+# Modo watch
 $ yarn run start:dev
 
-# production mode
+# Produção
 $ yarn run start:prod
 ```
 
-## Run tests
+### ✅ Testes
 
 ```bash
-# unit tests
+# Testes unitários
 $ yarn run test
 
-# e2e tests
+# Testes end-to-end
 $ yarn run test:e2e
 
-# test coverage
+# Cobertura de testes
 $ yarn run test:cov
 ```
 
-## Resources
+## 📊 Endpoints Disponíveis
 
-Check out a few resources that may come in handy when working with NestJS:
+### **Rotas**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- **GET `/rotas`**: Lista todas as rotas com filtros opcionais.
+- **GET `/rotas/rota/:id`**: Retorna detalhes de uma rota específica.
+- **POST `/rotas/rota`**: Cria uma nova rota.
+- **PATCH `/rotas/rota/:id`**: Atualiza uma rota existente.
+- **DELETE `/rotas/rota/:id`**: Remove uma rota.
 
-## Support
+### **Empresas**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **GET `/empresas`**: Lista todas as empresas.
+- **POST `/empresas`**: Cadastra uma nova empresa.
 
-## Stay in touch
+### **Veículos**
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **GET `/veiculos`**: Lista todos os tipos de veículos.
+- **POST `/veiculos`**: Cadastra um novo tipo de veículo.
 
-## License
+### **Horários**
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **GET `/horarios`**: Lista horários disponíveis para rotas.
+- **POST `/horarios`**: Cadastra um novo horário.
+
+### **Consulta de Transportes**
+
+- **GET `/transportes`**: Lista opções de transporte disponíveis para uma rota específica em um horário específico.
+
+## 📧 Contato
+
+Para mais informações ou dúvidas, entre em contato:
+
+- **Email**: joaquimnt18@gmail.com
+- **GitHub**: [Seu GitHub](https://github.com/joaquim-neto)
+
+---
+
+✨ **API Mobi**: Facilitando o transporte entre cidades! 🚍🛣️

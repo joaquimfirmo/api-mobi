@@ -54,9 +54,7 @@ describe('CompanyService', () => {
     razaoSocial: 'Company 1',
     nomeFantasia: 'Company 1',
     cnpj: '12345678901234',
-    cidade: 'City 1',
-    codigoCidade: 1,
-    uf: 'State 1',
+    email: 'example@email.com',
   };
 
   it('should be defined', () => {
@@ -70,7 +68,7 @@ describe('CompanyService', () => {
         razao_social: 'Company 1',
         nome_fantasia: 'Company 1',
         cnpj: '12345678901234',
-        id_cidade: '1',
+        email: 'example@email.com',
         created_at: new Date(),
         updated_at: null,
       },
@@ -86,7 +84,7 @@ describe('CompanyService', () => {
         razao_social: 'Company 1',
         nome_fantasia: 'Company 1',
         cnpj: '12345678901234',
-        id_cidade: '1',
+        email: 'example@email.com',
         created_at: new Date(),
         updated_at: null,
       },
@@ -106,7 +104,7 @@ describe('CompanyService', () => {
         nome_fantasia: 'Company 1',
         razao_social: 'Company 1',
         cnpj: '12345678901234',
-        id_cidade: '1',
+        email: 'example@email.com',
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -117,7 +115,7 @@ describe('CompanyService', () => {
       nome_fantasia: 'Company 1',
       razao_social: 'Company 1',
       cnpj: '12345678901234',
-      id_cidade: '1',
+      email: 'example@email.com',
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -134,7 +132,7 @@ describe('CompanyService', () => {
       razao_social: 'Company 1',
       nome_fantasia: 'Company 1',
       cnpj: '12345678901234',
-      id_cidade: '1',
+      email: 'example@email.com',
       created_at: new Date(),
       updated_at: null,
     };
@@ -159,7 +157,7 @@ describe('CompanyService', () => {
       razao_social: 'Company 1',
       nome_fantasia: 'Company 1',
       cnpj: '12345678901234',
-      id_cidade: '1',
+      email: 'example@email.com',
       created_at: new Date(),
       updated_at: null,
     };
@@ -180,7 +178,7 @@ describe('CompanyService', () => {
       razao_social: 'Company 1',
       nome_fantasia: 'Company 1',
       cnpj: '12345678901234',
-      id_cidade: '1',
+      email: 'example@email.com',
       created_at: new Date(),
       updated_at: null,
     };
@@ -207,7 +205,7 @@ describe('CompanyService', () => {
       razao_social: 'Company 1',
       nome_fantasia: 'Company 1',
       cnpj: '12345678901234',
-      id_cidade: '1',
+      email: 'example@email.com',
       created_at: new Date(),
       updated_at: null,
     });
@@ -220,7 +218,7 @@ describe('CompanyService', () => {
       razaoSocial: 'Company 1',
       nomeFantasia: 'Company 1',
       cnpj: '12345678901234',
-      idCidade: '1',
+      email: 'example@email.com',
       createdAt: expect.any(Date),
       updatedAt: null,
     });
@@ -239,9 +237,7 @@ describe('CompanyService', () => {
       razaoSocial: 'Company 1',
       nomeFantasia: 'Company 1',
       cnpj: '12345678901234',
-      cidade: 'City 1',
-      codigoCidade: 1,
-      uf: 'State 1',
+      email: 'example@email.com',
     };
 
     jest.spyOn(service, 'verifyRazaoSocialExists').mockResolvedValue(false);

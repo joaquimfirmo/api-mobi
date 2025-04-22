@@ -6,8 +6,10 @@ import { CompanyModule } from './company/company.module';
 import { DatabaseModule } from './common/database/database.module';
 import { CityModule } from './city/city.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
-import { TransportsModule } from './transports/transports.module';
+import { RoutesModule } from './route/routes.module';
 import { UsersModule } from './users/users.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { TransportsModule } from './transports/transports.module';
 
 @Module({
   imports: [
@@ -16,8 +18,10 @@ import { UsersModule } from './users/users.module';
     DatabaseModule,
     CityModule,
     VehiclesModule,
-    TransportsModule,
+    RoutesModule,
     UsersModule,
+    ScheduleModule,
+    TransportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

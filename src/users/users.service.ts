@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import User from './entities/user.entity';
@@ -29,11 +34,23 @@ export class UsersService {
       createUserDto.permissoes,
     );
 
-    this.logger.log(`Criando usuário: ${JSON.stringify(user)}`);
+    const emailExists = await this.usersRepository.findByEmail(user.email);
 
-    const result = await this.usersRepository.create(user);
+    if (emailExists.length > 0) {
+      throw new BadRequestException(
+        'Email informado é inválido ou já está em uso no sistema',
+      );
+    }
 
-    const [newUser] = result;
+    this.logger.log(
+      `Criando usuário: ${JSON.stringify({
+        nome: user.name,
+        email: user.email,
+        permissoes: user.permissions,
+      })}`,
+    );
+
+    const [newUser] = await this.usersRepository.create(user);
 
     const userResponse: UserResponse = {
       id: newUser.id,
