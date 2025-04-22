@@ -47,14 +47,20 @@ describe('TransportsRepository', () => {
     };
 
     await repository.findAll(filters);
-    expect(db.selectFrom('empresas_rotas').innerJoin).toHaveBeenCalled();
+    expect(
+      db.selectFrom('empresas_rotas_horarios').innerJoin,
+    ).toHaveBeenCalled();
 
-    expect(db.selectFrom('empresas_rotas').select).toHaveBeenCalledWith([
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select,
+    ).toHaveBeenCalledWith([
       'rotas.nome as rota',
       'empresas.nome_fantasia as empresa',
       'rotas.distancia as distancia_km',
       'rotas.tempo_estimado as duracao',
+      'rotas.via_principal as via_principal',
       'veiculos.nome as veiculo',
+      'horarios.dia_semana as dia_semana',
       'horarios.hora_partida as horario_partida',
       'horarios.hora_chegada as horario_chegada',
     ]);
@@ -77,13 +83,17 @@ describe('TransportsRepository', () => {
       filters.idCidadeDestino,
     );
 
-    expect(db.selectFrom('empresas_rotas').where).toHaveBeenCalled();
-    expect(db.selectFrom('empresas_rotas').select).toHaveBeenCalledWith([
+    expect(db.selectFrom('empresas_rotas_horarios').where).toHaveBeenCalled();
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select,
+    ).toHaveBeenCalledWith([
       'rotas.nome as rota',
       'empresas.nome_fantasia as empresa',
       'rotas.distancia as distancia_km',
       'rotas.tempo_estimado as duracao',
+      'rotas.via_principal as via_principal',
       'veiculos.nome as veiculo',
+      'horarios.dia_semana as dia_semana',
       'horarios.hora_partida as horario_partida',
       'horarios.hora_chegada as horario_chegada',
     ]);

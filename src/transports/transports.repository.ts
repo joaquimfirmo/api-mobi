@@ -29,17 +29,31 @@ export class TransportsRepository {
     let query;
 
     query = this.connection
-      .selectFrom('empresas_rotas')
-      .innerJoin('empresas', 'empresas_rotas.id_empresa', 'empresas.id')
-      .innerJoin('rotas', 'empresas_rotas.id_rota', 'rotas.id')
-      .innerJoin('horarios', 'empresas_rotas.id_horario', 'horarios.id')
-      .innerJoin('veiculos', 'empresas_rotas.id_veiculo', 'veiculos.id')
+      .selectFrom('empresas_rotas_horarios')
+      .innerJoin(
+        'empresas',
+        'empresas_rotas_horarios.id_empresa',
+        'empresas.id',
+      )
+      .innerJoin('rotas', 'empresas_rotas_horarios.id_rota', 'rotas.id')
+      .innerJoin(
+        'horarios',
+        'empresas_rotas_horarios.id_horario',
+        'horarios.id',
+      )
+      .innerJoin(
+        'veiculos',
+        'empresas_rotas_horarios.id_veiculo',
+        'veiculos.id',
+      )
       .select([
         'rotas.nome as rota',
         'empresas.nome_fantasia as empresa',
         'rotas.distancia as distancia_km',
         'rotas.tempo_estimado as duracao',
+        'rotas.via_principal as via_principal',
         'veiculos.nome as veiculo',
+        'horarios.dia_semana as dia_semana',
         'horarios.hora_partida as horario_partida',
         'horarios.hora_chegada as horario_chegada',
       ])
