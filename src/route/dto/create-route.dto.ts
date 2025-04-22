@@ -4,6 +4,7 @@ import {
   MaxLength,
   IsUUID,
   IsNumber,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateRouteDTO {
@@ -37,8 +38,18 @@ export class CreateRouteDTO {
   @MinLength(5, {
     message: 'Local de origem deve ter no mínimo 5 caracteres',
   })
-  @MaxLength(100, {
-    message: 'Local de origem deve ter no máximo 100 caracteres',
+  @MaxLength(200, {
+    message: 'Local de origem deve ter no máximo 255 caracteres',
   })
   public readonly localOrigem: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(5, {
+    message: 'Via principal deve ter no mínimo 5 caracteres',
+  })
+  @MaxLength(255, {
+    message: 'Via principal deve ter no máximo 255 caracteres',
+  })
+  public readonly viaPrincipal: string;
 }

@@ -2,33 +2,36 @@ import { randomUUID } from 'crypto';
 
 export class Route {
   public readonly id: string;
-  public readonly name: string;
-  public readonly idOriginCity: string;
-  public readonly idDestinationCity: string;
-  public readonly distance: number;
-  public readonly estimatedTime: string;
-  public readonly originLocation: string;
+  public readonly nome: string;
+  public readonly idCidadeOrigem: string;
+  public readonly idCidadeDestino: string;
+  public readonly distancia: number;
+  public readonly tempoEstimado: string;
+  public readonly local: string;
+  public readonly viaPrincipal: string | null;
   public readonly createdAt: Date | string | null;
   public readonly updatedAt: Date | string | null;
 
   constructor(
-    name: string,
-    idOriginCity: string,
-    idDestinationCity: string,
-    distance: number,
-    estimatedTime: string,
-    originLocation: string,
+    nome: string,
+    idCidadeOrigem: string,
+    idCidadeDestino: string,
+    distancia: number,
+    tempoEstimado: string,
+    local: string,
+    viaPrincipal?: string,
     id?: string,
     createdAt?: Date,
     updatedAt?: Date,
   ) {
     this.id = id || randomUUID();
-    this.name = name;
-    this.idOriginCity = idOriginCity;
-    this.idDestinationCity = idDestinationCity;
-    this.distance = distance;
-    this.estimatedTime = estimatedTime;
-    this.originLocation = originLocation;
+    this.nome = nome;
+    this.idCidadeOrigem = idCidadeOrigem;
+    this.idCidadeDestino = idCidadeDestino;
+    this.distancia = distancia;
+    this.tempoEstimado = tempoEstimado;
+    this.local = local;
+    this.viaPrincipal = viaPrincipal || null;
     this.createdAt = createdAt || null;
     this.updatedAt = updatedAt || null;
   }
