@@ -6,7 +6,7 @@ export interface Database {
   cidades: CidadeTable;
   horarios: HorariosTable;
   rotas: RotasTable;
-  empresas_rotas: EmpresasRotasTable;
+  empresas_rotas_horarios: EmpresasRotasHorariosTable;
   veiculos: VeiculoTable;
   usuarios: UsuarioTable;
 }
@@ -21,7 +21,8 @@ export interface EmpresaTable {
   updated_at: ColumnType<Date, string | undefined, null>;
 }
 
-export interface EmpresasRotasTable {
+export interface EmpresasRotasHorariosTable {
+  id: ColumnType<string, string>;
   id_empresa: ColumnType<string, string>;
   id_rota: ColumnType<string, string>;
   id_horario: ColumnType<string, string>;
@@ -50,6 +51,7 @@ export interface HorariosTable {
 }
 
 export type Schedules = Selectable<HorariosTable>;
+export type Routes = Selectable<RotasTable>;
 
 export interface RotasTable {
   id: ColumnType<string, string>;
@@ -59,6 +61,7 @@ export interface RotasTable {
   distancia: number;
   tempo_estimado: string;
   local: string;
+  via_principal: string | null | undefined;
   created_at?: ColumnType<Date, string | undefined, never>;
   updated_at?: ColumnType<Date, string | undefined, null>;
 }
