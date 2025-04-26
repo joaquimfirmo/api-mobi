@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   Logger,
   Scope,
-  InternalServerErrorException,
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
@@ -12,6 +11,7 @@ import { RoutesRepository } from './routes.repository';
 import { Routes } from '../common/database/types';
 import { RouteMapper } from './mapper/route.mapper';
 import { Route } from './entities/route.entity';
+import { DatabaseException } from '../common/execptions/database.execption';
 
 describe('RoutesService', () => {
   let service: RoutesService;
@@ -91,18 +91,13 @@ describe('RoutesService', () => {
       const filters: Partial<Routes> = { id: '1' };
       const page = 1;
       const limit = 10;
-      const errorMessage = 'Database error';
+      const errorMessage = 'Erro ao buscar rotas';
       jest
         .spyOn(routesRepository, 'findAll')
-        .mockRejectedValue(new Error(errorMessage));
+        .mockRejectedValue(new DatabaseException(errorMessage));
 
       await expect(service.findAll(filters, page, limit)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      expect(logger.error).toHaveBeenCalledWith(
-        `Erro ao buscar rotas com os filtros: ${JSON.stringify(filters)}`,
-        new Error(errorMessage),
+        DatabaseException,
       );
     });
   });
@@ -125,37 +120,19 @@ describe('RoutesService', () => {
       const errorMessage = 'Database error';
       jest
         .spyOn(routesRepository, 'findById')
-        .mockRejectedValue(new Error(errorMessage));
+        .mockRejectedValue(new DatabaseException(errorMessage));
 
-      const handleErrorSpy = jest.spyOn(service as any, 'handleError');
-
-      await expect(service.findOne(id)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      expect(handleErrorSpy).toHaveBeenCalledWith(
-        `Erro ao buscar rota com o ID:${id}`,
-        new Error(errorMessage),
-      );
-      expect(logger.error).toHaveBeenCalledWith(
-        `Erro ao buscar rota com o ID:${id}`,
-        new Error(errorMessage),
-      );
+      await expect(service.findOne(id)).rejects.toThrow(DatabaseException);
     });
 
     it('should throw NotFoundException if route is not found', async () => {
       const id = '1';
 
-      const handleErrorSpy = jest.spyOn(service as any, 'handleError');
       jest.spyOn(routesRepository, 'findById').mockResolvedValue(null);
       await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
-      expect(handleErrorSpy).toHaveBeenCalledWith(
-        `Erro ao buscar rota com o ID:${id}`,
-        new NotFoundException(`Rota com o ID:${id} não encontrada`),
-      );
-      expect(logger.error).toHaveBeenCalledWith(
-        `Erro ao buscar rota com o ID:${id}`,
-        new NotFoundException(`Rota com o ID:${id} não encontrada`),
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        `Rota com o ID:${id} não encontrada`,
       );
     });
   });
@@ -236,15 +213,10 @@ describe('RoutesService', () => {
       const errorMessage = 'Database error';
       jest
         .spyOn(routesRepository, 'create')
-        .mockRejectedValue(new Error(errorMessage));
+        .mockRejectedValue(new DatabaseException(errorMessage));
 
       await expect(service.create(createRouteDTO)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      expect(logger.error).toHaveBeenCalledWith(
-        `Erro ao salvar rota com`,
-        new Error(errorMessage),
+        DatabaseException,
       );
     });
   });
@@ -320,15 +292,10 @@ describe('RoutesService', () => {
       const errorMessage = 'Database error';
       jest
         .spyOn(routesRepository, 'update')
-        .mockRejectedValue(new Error(errorMessage));
+        .mockRejectedValue(new DatabaseException(errorMessage));
 
       await expect(service.update(id, updateRouteDTO)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      expect(logger.error).toHaveBeenCalledWith(
-        `Erro ao atualizar rota com o ID: ${id}`,
-        new Error(errorMessage),
+        DatabaseException,
       );
     });
   });
@@ -359,39 +326,9 @@ describe('RoutesService', () => {
         .mockResolvedValue(RouteMapper.toDomain(mockRoutes[0]));
       jest
         .spyOn(routesRepository, 'delete')
-        .mockRejectedValue(new Error(errorMessage));
+        .mockRejectedValue(new DatabaseException(errorMessage));
 
-      await expect(service.remove(id)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      expect(logger.error).toHaveBeenCalledWith(
-        `Erro ao excluir rota com o ID:${id}`,
-        new Error(errorMessage),
-      );
-    });
-  });
-
-  describe('handleError', () => {
-    it('should log the error and throw an InternalServerErrorException', () => {
-      const message = 'Test error';
-      const error = new Error('Database error');
-
-      expect(() => service['handleError'](message, error)).toThrow(
-        InternalServerErrorException,
-      );
-
-      expect(logger.error).toHaveBeenCalledWith(message, error);
-    });
-    it('should log the error and throw a NotFoundException', () => {
-      const message = 'Test error';
-      const error = new NotFoundException('Rota não encontrada');
-
-      expect(() => service['handleError'](message, error)).toThrow(
-        NotFoundException,
-      );
-
-      expect(logger.error).toHaveBeenCalledWith(message, error);
+      await expect(service.remove(id)).rejects.toThrow(DatabaseException);
     });
   });
 

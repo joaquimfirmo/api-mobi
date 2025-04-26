@@ -3,7 +3,7 @@ import { RoutesRepository } from './routes.repository';
 import { Kysely } from 'kysely';
 import { Database } from 'src/common/database/types';
 import { RouteMapper } from './mapper/route.mapper';
-
+import { DatabaseException } from '../common/execptions/database.execption';
 describe('RoutesRepository', () => {
   let repository: RoutesRepository;
   let db: Kysely<Database>;
@@ -34,6 +34,9 @@ describe('RoutesRepository', () => {
             select: jest.fn().mockReturnThis(),
             selectAll: jest.fn().mockReturnThis(),
             innerJoin: jest.fn().mockReturnThis(),
+            insertInto: jest.fn().mockReturnThis(),
+            updateTable: jest.fn().mockReturnThis(),
+            deleteFrom: jest.fn().mockReturnThis(),
             offset: jest.fn().mockReturnThis(),
             where: jest.fn().mockReturnThis(),
             limit: jest.fn().mockReturnThis(),
@@ -71,6 +74,20 @@ describe('RoutesRepository', () => {
     );
   });
 
+  it('shoul trow DatabaseException when select fails', async () => {
+    const filters = { nome: 'Rota 1' };
+    const page = 0;
+    const limit = 10;
+
+    jest.spyOn(repository as any, 'buildQuery').mockReturnValue({
+      execute: jest.fn().mockRejectedValue(new Error('Erro ao selecionar')),
+    });
+
+    await expect(repository.findAll(filters, page, limit)).rejects.toThrow(
+      DatabaseException,
+    );
+  });
+
   it('should call findById method', async () => {
     db.selectFrom('rotas').selectAll().where('id', '=', '1').execute = jest
       .fn()
@@ -85,6 +102,15 @@ describe('RoutesRepository', () => {
     expect(db.selectFrom('rotas').selectAll().limit).toHaveBeenCalledWith(1);
     expect(db.selectFrom('rotas').selectAll().execute).toHaveBeenCalled();
     expect(result).toEqual(RouteMapper.toDomain(mockRoutes[0]));
+  });
+
+  it('should throw DatabaseException when query fails', async () => {
+    const id = '1';
+    jest.spyOn(repository['db'], 'selectFrom').mockImplementation(() => {
+      throw new Error('Erro ao executar query');
+    });
+
+    await expect(repository.findById(id)).rejects.toThrow(DatabaseException);
   });
 
   it('should call findRouteByCities method', async () => {
@@ -116,6 +142,19 @@ describe('RoutesRepository', () => {
     expect(result).toEqual(RouteMapper.toDomain(mockRoutes[0]));
   });
 
+  it('should throw DatabaseException when findRouteByCities fails', async () => {
+    const cityId1 = 'city-id-1';
+    const cityId2 = 'city-id-2';
+
+    jest.spyOn(repository['db'], 'selectFrom').mockImplementation(() => {
+      throw new Error('Erro ao executar query');
+    });
+
+    await expect(
+      repository.findRouteByCities(cityId1, cityId2),
+    ).rejects.toThrow(DatabaseException);
+  });
+
   it('shoud call findRouteByName method', async () => {
     const routeName = 'City A to City B';
 
@@ -132,6 +171,18 @@ describe('RoutesRepository', () => {
     expect(db.selectFrom('rotas').selectAll().limit).toHaveBeenCalledWith(1);
     expect(db.selectFrom('rotas').selectAll().execute).toHaveBeenCalled();
     expect(result).toEqual(RouteMapper.toDomain(mockRoutes[0]));
+  });
+
+  it('should throw DatabaseException when findRouteByName fails', async () => {
+    const routeName = 'City A to City B';
+
+    jest.spyOn(repository['db'], 'selectFrom').mockImplementation(() => {
+      throw new Error('Erro ao executar query');
+    });
+
+    await expect(repository.findRouteByName(routeName)).rejects.toThrow(
+      DatabaseException,
+    );
   });
 
   it('should call create method', async () => {
@@ -164,6 +215,15 @@ describe('RoutesRepository', () => {
 
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
     expect(db.transaction().execute).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw DatabaseException when insert fails', async () => {
+    const route = { nome: 'Rota 1' };
+    jest.spyOn(repository['db'], 'insertInto').mockImplementation(() => {
+      throw new Error('Erro ao inserir rota');
+    });
+
+    await expect(repository.create(route)).rejects.toThrow(DatabaseException);
   });
 
   it('should call update method', async () => {
@@ -206,9 +266,31 @@ describe('RoutesRepository', () => {
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
   });
 
+  it('should throw DatabaseException when update fails', async () => {
+    const id = '1';
+    const route = { nome: 'Rota Atualizada' };
+    jest.spyOn(repository['db'], 'updateTable').mockImplementation(() => {
+      throw new Error('Erro ao atualizar rota');
+    });
+
+    await expect(repository.update(id, route)).rejects.toThrow(
+      DatabaseException,
+    );
+  });
+
   it('should call delete method', async () => {
     await repository.delete('1');
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it('should throw DatabaseException when delete fails', async () => {
+    const id = '1';
+
+    jest.spyOn(db.transaction(), 'execute').mockImplementation(async () => {
+      throw new Error('Erro ao deletar rota');
+    });
+
+    await expect(repository.delete(id)).rejects.toThrow(DatabaseException);
   });
 
   it('buildQuery should be called with the correct parameters', () => {
