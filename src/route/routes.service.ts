@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   Logger,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Route } from './entities/route.entity';
@@ -25,27 +24,12 @@ export class RoutesService {
     page: number,
     limit: number,
   ): Promise<Route[]> {
-    try {
-      const persistenceFilters = RouteMapper.toPersistence(filters);
-      return await this.routesRepository.findAll(
-        persistenceFilters,
-        page,
-        limit,
-      );
-    } catch (error) {
-      this.handleError(
-        `Erro ao buscar rotas com os filtros: ${JSON.stringify(filters)}`,
-        error,
-      );
-    }
+    const persistenceFilters = RouteMapper.toPersistence(filters);
+    return await this.routesRepository.findAll(persistenceFilters, page, limit);
   }
 
   async findOne(id: string): Promise<Route> {
-    try {
-      return await this.getRouteById(id);
-    } catch (error) {
-      this.handleError(`Erro ao buscar rota com o ID:${id}`, error);
-    }
+    return await this.getRouteById(id);
   }
   async create(createRouteDTO: CreateRouteDTO): Promise<Route> {
     await this.ensureRouteDoesNotExist(createRouteDTO);
@@ -81,41 +65,27 @@ export class RoutesService {
     return result;
   }
   async remove(id: string) {
-    try {
-      const route = await this.getRouteById(id);
+    const route = await this.getRouteById(id);
 
-      await this.routesRepository.delete(route.id);
+    await this.routesRepository.delete(route.id);
 
-      this.logger.log(`Rota com o ID:${id} excluída com sucesso`);
+    this.logger.log(`Rota com o ID:${id} excluída com sucesso`);
 
-      return;
-    } catch (error) {
-      this.handleError(`Erro ao excluir rota com o ID:${id}`, error);
-    }
+    return;
   }
 
   private async saveRoute(route: Route): Promise<Route> {
-    try {
-      return await this.routesRepository.create(
-        RouteMapper.toPersistence(route),
-      );
-    } catch (error) {
-      this.handleError('Erro ao salvar rota com', error);
-    }
+    return await this.routesRepository.create(RouteMapper.toPersistence(route));
   }
 
   private async saveUpdatedRoute(
     id: string,
     route: UpdateRouteDTO,
   ): Promise<Route> {
-    try {
-      return await this.routesRepository.update(
-        id,
-        RouteMapper.toPersistence(route),
-      );
-    } catch (error) {
-      this.handleError(`Erro ao atualizar rota com o ID: ${id}`, error);
-    }
+    return await this.routesRepository.update(
+      id,
+      RouteMapper.toPersistence(route),
+    );
   }
 
   private async ensureRouteDoesNotExist(
@@ -156,18 +126,5 @@ export class RoutesService {
     }
 
     return route;
-  }
-
-  private handleError(message: string, error: any): never {
-    this.logger.error(message, error);
-    if (
-      error instanceof NotFoundException ||
-      error instanceof BadRequestException
-    ) {
-      throw error;
-    }
-    throw new InternalServerErrorException(
-      'Erro interno ao tentar processar a solicitação',
-    );
   }
 }
