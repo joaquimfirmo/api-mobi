@@ -7,7 +7,7 @@ export class DatabaseException extends InternalServerErrorException {
     context: string = 'DatabaseException',
   ) {
     super(
-      ` ${message}${error?.message ? `: ${error.message}` : ''}`,
+      `${message}${error?.message ? `: ${error.message}` : ''}`,
       error?.stack,
     );
     this.name = context;
