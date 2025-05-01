@@ -52,6 +52,7 @@ export interface HorariosTable {
 
 export type Schedules = Selectable<HorariosTable>;
 export type Routes = Selectable<RotasTable>;
+export type Vehicles = Selectable<VeiculoTable>;
 
 export interface RotasTable {
   id: ColumnType<string, string>;
