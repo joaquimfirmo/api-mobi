@@ -3,6 +3,7 @@ import { VehiclesRepository } from './vehicles.repository';
 import { Kysely } from 'kysely';
 import { Database } from 'src/common/database/types';
 import { DatabaseException } from '../common/execptions/database.execption';
+import { VehicleMapper } from './mapper/vehicles.mapper';
 
 describe('VehiclesRepository', () => {
   let repository: VehiclesRepository;
@@ -35,6 +36,11 @@ describe('VehiclesRepository', () => {
   });
 
   it('should call findAll method', async () => {
+    db.selectFrom('veiculos').selectAll().execute = jest
+      .fn()
+      .mockResolvedValue([
+        VehicleMapper.toPersistence({ id: '1', nome: 'Nome' }),
+      ]);
     await repository.findAll();
     expect(db.selectFrom('veiculos').selectAll().execute).toHaveBeenCalled();
   });
@@ -104,18 +110,18 @@ describe('VehiclesRepository', () => {
   });
 
   it('should call create method', async () => {
-    db.transaction().execute = jest
-      .fn()
-      .mockResolvedValue([
-        { id: '1', nome: 'Nome', created_at: new Date(), updated_at: '' },
-      ]);
+    db.transaction().execute = jest.fn().mockResolvedValue([
+      VehicleMapper.toDomain({
+        id: '1',
+        nome: 'Nome',
+        created_at: new Date(),
+        updated_at: new Date(),
+      }),
+    ]);
 
-    await repository.create({
-      id: '1',
-      nome: 'Nome',
-      created_at: new Date(),
-      updated_at: '',
-    });
+    await repository.create(
+      VehicleMapper.toPersistence({ id: '1', nome: 'Nome' }),
+    );
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
   });
@@ -125,26 +131,27 @@ describe('VehiclesRepository', () => {
       .fn()
       .mockRejectedValue(new Error('Database error'));
     await expect(
-      repository.create({
-        id: '1',
-        nome: 'Nome',
-        created_at: new Date(),
-        updated_at: '',
-      }),
+      repository.create(
+        VehicleMapper.toPersistence({
+          id: '1',
+          nome: 'Nome',
+        }),
+      ),
     ).rejects.toThrow(DatabaseException);
     await expect(
-      repository.create({
-        id: '1',
-        nome: 'Nome',
-        created_at: new Date(),
-        updated_at: '',
-      }),
+      repository.create(VehicleMapper.toPersistence({ id: '1', nome: 'Nome' })),
     ).rejects.toThrow('Não foi possível criar veículo com o nome Nome');
   });
 
   it('should call update method', async () => {
+    db.transaction().execute = jest.fn().mockResolvedValue([
+      VehicleMapper.toPersistence({
+        id: '1',
+        nome: 'Carro',
+      }),
+    ]);
     await repository.update('1', {
-      nome: 'Nome',
+      nome: 'Carro',
     });
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));
     expect(db.transaction().execute).toHaveBeenCalledWith(expect.any(Function));

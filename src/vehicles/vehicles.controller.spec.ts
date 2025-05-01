@@ -10,8 +10,8 @@ describe('VehiclesController', () => {
     {
       id: '1',
       nome: 'Carro A',
-      created_at: new Date(),
-      updated_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   ];
 
