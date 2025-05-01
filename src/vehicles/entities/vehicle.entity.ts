@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 export class Vehicle {
   public readonly id: string;
   public readonly nome: string;
-  public readonly created_at: Date | string | null;
-  public readonly updated_at: Date | string | null;
+  public readonly createdAt: Date | string | null;
+  public readonly updatedAt: Date | string | null;
 
   constructor(
     nome: string,
@@ -14,7 +14,7 @@ export class Vehicle {
   ) {
     this.id = id || randomUUID();
     this.nome = nome;
-    this.created_at = created_at || null;
-    this.updated_at = updated_at || null;
+    this.createdAt = created_at || null;
+    this.updatedAt = updated_at || null;
   }
 }

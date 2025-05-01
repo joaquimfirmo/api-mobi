@@ -8,6 +8,7 @@ import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { VehiclesRepository } from './vehicles.repository';
 import { Vehicle } from './entities/vehicle.entity';
+import { VehicleMapper } from './mapper/vehicles.mapper';
 
 @Injectable()
 export class VehiclesService {
@@ -17,36 +18,27 @@ export class VehiclesService {
   ) {}
 
   async findAll(): Promise<Vehicle[]> {
-    return this.vehicleRepository.findAll();
+    return await this.vehicleRepository.findAll();
   }
 
   async findOne(id: string): Promise<Vehicle> {
-    const vehicle = await this.getVehicleById(id);
-    return new Vehicle(
-      vehicle.nome,
-      vehicle.id,
-      vehicle.created_at,
-      vehicle.updated_at,
-    );
+    return await this.getVehicleById(id);
   }
 
   async create(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
-    this.logger.log(`Criando veículo: ${JSON.stringify(createVehicleDto)}`);
+    this.logger.log(`Iniciando criação do veículo: ${createVehicleDto.nome}`);
 
     await this.ensureVehicleDoesNotExist(createVehicleDto);
 
     const vehicle = new Vehicle(createVehicleDto.nome);
 
-    const result = await this.vehicleRepository.create(vehicle);
-    this.logger.log(
-      `Veículo: ${JSON.stringify(createVehicleDto)} criado com sucesso`,
-    );
-    return new Vehicle(
-      result.nome,
-      result.id,
-      result.created_at,
-      result.updated_at,
-    );
+    const vehicleRecord = VehicleMapper.toPersistence(vehicle);
+
+    const result = await this.vehicleRepository.create(vehicleRecord);
+
+    this.logger.log(`Veículo criado com sucesso: ${JSON.stringify(result)}`);
+
+    return result;
   }
 
   async update(
@@ -58,7 +50,7 @@ export class VehiclesService {
     this.logger.log(`Atualizando veículo com id: ${id}`);
     const updatedVehicle = await this.vehicleRepository.update(
       id,
-      updateVehicleDto,
+      VehicleMapper.toPersistence(updateVehicleDto),
     );
     this.logger.log(`Veículo com id: ${id} atualizado com sucesso`);
     return updatedVehicle;
@@ -80,9 +72,9 @@ export class VehiclesService {
   }
 
   private async getVehicleById(id: string): Promise<Vehicle> {
-    const vehicle = await this.vehicleRepository.findById(id);
+    const vehicle: Vehicle = await this.vehicleRepository.findById(id);
     if (!vehicle) {
-      this.logger.error(`Veículo com o ID:${id}, informado não foi encontrado`);
+      this.logger.warn(`Veículo com o ID:${id}, informado não foi encontrado`);
       throw new NotFoundException(
         `Veículo com o ID:${id}, informado não foi encontrado`,
       );
@@ -95,7 +87,7 @@ export class VehiclesService {
   ): Promise<void> {
     const vehicleExists = await this.checkVehicleByName(createVehicleDto.nome);
     if (vehicleExists) {
-      this.logger.error(
+      this.logger.warn(
         `Veículo com o nome:${createVehicleDto.nome}, já existe`,
       );
       throw new BadRequestException(

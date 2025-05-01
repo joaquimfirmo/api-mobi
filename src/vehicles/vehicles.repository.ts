@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
-import { Database } from 'src/common/database/types';
-import { Vehicle } from './entities/vehicle.entity';
-import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { Database, Vehicles } from 'src/common/database/types';
 import { DatabaseException } from '../common/execptions/database.execption';
+import { Vehicle } from './entities/vehicle.entity';
+import { VehicleMapper } from './mapper/vehicles.mapper';
 
 @Injectable()
 export class VehiclesRepository {
@@ -11,7 +11,14 @@ export class VehiclesRepository {
 
   async findAll(): Promise<Vehicle[]> {
     try {
-      return await this.db.selectFrom('veiculos').selectAll().execute();
+      const result: Vehicles[] = await this.db
+        .selectFrom('veiculos')
+        .selectAll()
+        .execute();
+
+      return result.map((vehicle) => {
+        return VehicleMapper.toDomain(vehicle);
+      });
     } catch (error) {
       throw new DatabaseException(
         `Não foi possível buscar veículos`,
@@ -21,7 +28,7 @@ export class VehiclesRepository {
     }
   }
 
-  async findById(id: string): Promise<Vehicle> {
+  async findById(id: string): Promise<Vehicle | null> {
     try {
       const [result] = await this.db
         .selectFrom('veiculos')
@@ -29,7 +36,8 @@ export class VehiclesRepository {
         .where('id', '=', id)
         .limit(1)
         .execute();
-      return result;
+
+      return result ? VehicleMapper.toDomain(result) : null;
     } catch (error) {
       throw new DatabaseException(
         `Não foi possível buscar veículo com o id ${id}`,
@@ -39,7 +47,7 @@ export class VehiclesRepository {
     }
   }
 
-  async findByName(nome: string): Promise<Vehicle> {
+  async findByName(nome: string): Promise<Vehicle | null> {
     try {
       const [result] = await this.db
         .selectFrom('veiculos')
@@ -48,7 +56,7 @@ export class VehiclesRepository {
         .limit(1)
         .execute();
 
-      return result;
+      return result ? VehicleMapper.toDomain(result) : null;
     } catch (error) {
       throw new DatabaseException(
         `Não foi possível buscar veículo com o nome ${nome}`,
@@ -58,7 +66,7 @@ export class VehiclesRepository {
     }
   }
 
-  async create(vehicle: Vehicle): Promise<Vehicle> {
+  async create(vehicle: Partial<Vehicles>): Promise<Vehicle> {
     try {
       const [result] = await this.db.transaction().execute(async (trx) => {
         return await trx
@@ -71,7 +79,7 @@ export class VehiclesRepository {
           .execute();
       });
 
-      return result;
+      return VehicleMapper.toDomain(result);
     } catch (error) {
       throw new DatabaseException(
         `Não foi possível criar veículo com o nome ${vehicle.nome}`,
@@ -81,9 +89,9 @@ export class VehiclesRepository {
     }
   }
 
-  async update(id: string, vehicle: UpdateVehicleDto): Promise<Vehicle> {
+  async update(id: string, vehicle: Partial<Vehicles>): Promise<Vehicle> {
     try {
-      return await this.db.transaction().execute(async (trx) => {
+      const result = await this.db.transaction().execute(async (trx) => {
         return await trx
           .updateTable('veiculos')
           .set({
@@ -94,6 +102,8 @@ export class VehiclesRepository {
           .returningAll()
           .executeTakeFirstOrThrow();
       });
+
+      return VehicleMapper.toDomain(result);
     } catch (error) {
       throw new DatabaseException(
         `Não foi possível atualizar veículo com o ID ${id}`,
