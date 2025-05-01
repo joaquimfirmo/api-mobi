@@ -8,7 +8,7 @@ export const databaseProviders = [
       try {
         const dialect = new PostgresDialect({
           pool: new Pool({
-            user: process.env.BD_USER,
+            user: process.env.BD_USER || 'root',
             host: process.env.BD_HOST || 'localhost',
             database: process.env.BD_DATABASE || '',
             password: process.env.BD_PASSWORD || '',
