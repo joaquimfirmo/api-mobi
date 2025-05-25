@@ -100,7 +100,9 @@ describe('VehiclesRepository', () => {
 
   it('should throw DatabaseException if findByName fails', async () => {
     db.selectFrom('veiculos').selectAll().where('nome', '=', 'Nome').execute =
-      jest.fn().mockRejectedValue(new Error('Database error'));
+      jest
+        .fn()
+        .mockRejectedValue(new Error('Detalhes do erro: Database error'));
     await expect(repository.findByName('Nome')).rejects.toThrow(
       DatabaseException,
     );
@@ -171,7 +173,7 @@ describe('VehiclesRepository', () => {
         nome: 'Nome',
       }),
     ).rejects.toThrow(
-      'Não foi possível atualizar veículo com o ID 1: Database error',
+      'Não foi possível atualizar veículo com o ID 1: Detalhes do erro: Database error',
     );
   });
 
@@ -187,7 +189,7 @@ describe('VehiclesRepository', () => {
       .mockRejectedValue(new Error('Database error'));
     await expect(repository.delete('1')).rejects.toThrow(DatabaseException);
     await expect(repository.delete('1')).rejects.toThrow(
-      'Não foi possível deletar veículo com o ID 1: Database error',
+      'Não foi possível deletar veículo com o ID 1: Detalhes do erro: Database error',
     );
   });
 });

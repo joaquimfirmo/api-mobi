@@ -5,7 +5,13 @@ import { DatabaseExceptionFilter } from './common/filters/database-execption.fil
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      enableDebugMessages: true,
+    }),
+  );
   app.useGlobalFilters(new DatabaseExceptionFilter());
   await app.listen(3000);
 }

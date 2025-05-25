@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Kysely } from 'kysely';
 import { Database } from 'src/common/database/types';
+import { DatabaseException } from '../common/execptions/database.execption';
 import { TransportsRepository } from './transports.repository';
+import { DiasSemana } from '../types/enums/dias-semana.enum';
 
 describe('TransportsRepository', () => {
   let repository: TransportsRepository;
@@ -40,7 +42,7 @@ describe('TransportsRepository', () => {
 
   it('should call findAll method', async () => {
     const filters = {
-      diaSemana: null,
+      diaSemana: DiasSemana.SegundaFeira,
       horaPartida: null,
       idCidadeDestino: null,
       idCidadeOrigem: null,
@@ -69,7 +71,7 @@ describe('TransportsRepository', () => {
   it('should call findAll with filters', async () => {
     const spy = jest.spyOn(repository as any, 'generateWhereClause');
     const filters = {
-      diaSemana: 'Segunda-feira',
+      diaSemana: DiasSemana.SegundaFeira,
       horaPartida: '08:00',
       idCidadeDestino: '1',
       idCidadeOrigem: '2',
@@ -97,6 +99,29 @@ describe('TransportsRepository', () => {
       'horarios.hora_partida as horario_partida',
       'horarios.hora_chegada as horario_chegada',
     ]);
+  });
+
+  it('should throw DatabaseException if findAll fails', async () => {
+    db.selectFrom('empresas_rotas_horarios').innerJoin = jest
+      .fn()
+      .mockReturnValue(new Error('Database error'));
+
+    await expect(
+      repository.findAll({
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: null,
+        idCidadeDestino: null,
+        idCidadeOrigem: null,
+      }),
+    ).rejects.toThrow(DatabaseException);
+    await expect(
+      repository.findAll({
+        diaSemana: DiasSemana.SegundaFeira,
+        horaPartida: null,
+        idCidadeDestino: null,
+        idCidadeOrigem: null,
+      }),
+    ).rejects.toThrow('Não foi possível buscar transportes');
   });
 
   it('should call generateWhereClause method', () => {
