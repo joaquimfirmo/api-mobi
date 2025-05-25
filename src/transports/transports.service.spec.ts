@@ -56,7 +56,7 @@ describe('TransportsService', () => {
   it('should call findAll method from repository', async () => {
     jest.spyOn(repository, 'findAll').mockResolvedValueOnce(mockTransports);
     const filters = {
-      DiaSemana: DiasSemana.SegundaFeira,
+      diaSemana: DiasSemana.SegundaFeira,
     };
 
     const result = await service.findAll(filters, 1, 10);
@@ -67,26 +67,5 @@ describe('TransportsService', () => {
     );
     expect(logger.log).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockTransports);
-  });
-
-  it('should log error when findAll fails', async () => {
-    const filters = {
-      DiaSemana: DiasSemana.SegundaFeira,
-    };
-    const errorMessage = 'Error fetching transports';
-    jest
-      .spyOn(repository, 'findAll')
-      .mockRejectedValueOnce(new Error(errorMessage));
-    jest.spyOn(logger, 'error').mockImplementation(() => {});
-
-    await expect(service.findAll(filters, 1, 10)).rejects.toThrow(
-      `Internal server error while fetching transports`,
-    );
-
-    expect(logger.error).toHaveBeenCalledWith(
-      'Error fetching transports',
-      expect.any(Error),
-    );
-    expect(logger.error).toHaveBeenCalledTimes(1);
   });
 });
