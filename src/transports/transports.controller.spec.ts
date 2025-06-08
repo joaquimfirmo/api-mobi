@@ -65,7 +65,7 @@ describe('TransportsController', () => {
   it('should call create method from service', async () => {
     const createTransportDto = {
       empresaId: '1',
-      routaId: '1',
+      rotaId: '1',
       horarioId: '1',
       veiculoId: '1',
       precoPassagem: 20,

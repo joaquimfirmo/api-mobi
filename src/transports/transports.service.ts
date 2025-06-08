@@ -54,23 +54,23 @@ export class TransportsService {
   }
 
   async create(transport: CreateTransportDto): Promise<any> {
-    const { empresaId, routaId, horarioId, veiculoId, precoPassagem } =
+    const { empresaId, rotaId, horarioId, veiculoId, precoPassagem } =
       transport;
 
-    await this.validateIds(empresaId, routaId, horarioId, veiculoId);
+    await this.validateIds(empresaId, rotaId, horarioId, veiculoId);
 
     await this.ensureTransportDoesNotExist(transport);
 
     const transportRecord = new CompanyRouteSchedule(
       empresaId,
-      routaId,
+      rotaId,
       horarioId,
       veiculoId,
       precoPassagem,
     );
 
     this.logger.log(
-      `Criando transporte: Empresa: ${empresaId}, Rota: ${routaId}, Horário: ${horarioId}, Veículo: ${veiculoId}, Preço: ${precoPassagem}`,
+      `Criando transporte: Empresa: ${empresaId}, Rota: ${rotaId}, Horário: ${horarioId}, Veículo: ${veiculoId}, Preço: ${precoPassagem}`,
     );
 
     return await this.transportsRepository.create(
@@ -128,14 +128,14 @@ export class TransportsService {
   private async ensureTransportDoesNotExist(
     createTransportDto: CreateTransportDto,
   ): Promise<void> {
-    const { empresaId, routaId, horarioId, veiculoId } = createTransportDto;
+    const { empresaId, rotaId, horarioId, veiculoId } = createTransportDto;
 
     this.logger.log(
-      `Verificando se transporte já existe para os IDs: Empresa: ${empresaId}, Rota: ${routaId}, Horário: ${horarioId}, Veículo: ${veiculoId}`,
+      `Verificando se transporte já existe para os IDs: Empresa: ${empresaId}, Rota: ${rotaId}, Horário: ${horarioId}, Veículo: ${veiculoId}`,
     );
     const transportExists = await this.transportsRepository.exists(
       empresaId,
-      routaId,
+      rotaId,
       horarioId,
       veiculoId,
     );

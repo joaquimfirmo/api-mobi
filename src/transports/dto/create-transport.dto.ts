@@ -7,7 +7,7 @@ export class CreateTransportDto {
 
   @IsUUID(4, { message: 'O ID da rota deve ser um UUID válido.' })
   @IsNotEmpty({ message: 'O ID da rota não pode estar vazio.' })
-  public readonly routaId: string;
+  public readonly rotaId: string;
 
   @IsUUID(4, { message: 'O ID do horário deve ser um UUID válido.' })
   @IsNotEmpty({ message: 'O ID do horário não pode estar vazio.' })

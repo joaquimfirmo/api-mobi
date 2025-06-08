@@ -144,7 +144,7 @@ describe('TransportsService', () => {
   it('should create a transport', async () => {
     const createTransportDto = {
       empresaId: '1',
-      routaId: '2',
+      rotaId: '2',
       horarioId: '3',
       veiculoId: '4',
       precoPassagem: 20,
@@ -163,7 +163,7 @@ describe('TransportsService', () => {
     ]);
 
     jest.spyOn(routesRepository, 'findById').mockResolvedValueOnce({
-      id: createTransportDto.routaId,
+      id: createTransportDto.rotaId,
       nome: 'Rota A',
       idCidadeOrigem: '1',
       idCidadeDestino: '2',
@@ -180,7 +180,7 @@ describe('TransportsService', () => {
       horaPartida: '07:00:00',
       horaChegada: '08:00:00',
       diaSemana: DiasSemana.SegundaFeira,
-      idRota: createTransportDto.routaId,
+      idRota: createTransportDto.rotaId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -195,7 +195,7 @@ describe('TransportsService', () => {
     jest.spyOn(repository, 'create').mockResolvedValueOnce({
       id: 'new-transport-id',
       id_empresa: createTransportDto.empresaId,
-      id_rota: createTransportDto.routaId,
+      id_rota: createTransportDto.rotaId,
       id_horario: createTransportDto.horarioId,
       id_veiculo: createTransportDto.veiculoId,
       preco_passagem: createTransportDto.precoPassagem * 100, // Convert to cents
@@ -212,7 +212,7 @@ describe('TransportsService', () => {
     expect(repository.create).toHaveBeenCalledWith({
       id: expect.any(String),
       id_empresa: createTransportDto.empresaId,
-      id_rota: createTransportDto.routaId,
+      id_rota: createTransportDto.rotaId,
       id_horario: createTransportDto.horarioId,
       id_veiculo: createTransportDto.veiculoId,
       preco_passagem: createTransportDto.precoPassagem * 100,
@@ -222,7 +222,7 @@ describe('TransportsService', () => {
     expect(result).toEqual({
       id: expect.any(String),
       id_empresa: createTransportDto.empresaId,
-      id_rota: createTransportDto.routaId,
+      id_rota: createTransportDto.rotaId,
       id_horario: createTransportDto.horarioId,
       id_veiculo: createTransportDto.veiculoId,
       preco_passagem: createTransportDto.precoPassagem * 100,
@@ -234,7 +234,7 @@ describe('TransportsService', () => {
   it('should throw an error if transport already exists', async () => {
     const createTransportDto = {
       empresaId: '1',
-      routaId: '2',
+      rotaId: '2',
       horarioId: '3',
       veiculoId: '4',
       precoPassagem: 20,
@@ -253,7 +253,7 @@ describe('TransportsService', () => {
     ]);
 
     jest.spyOn(routesRepository, 'findById').mockResolvedValueOnce({
-      id: createTransportDto.routaId,
+      id: createTransportDto.rotaId,
       nome: 'Rota A',
       idCidadeOrigem: '1',
       idCidadeDestino: '2',
@@ -270,7 +270,7 @@ describe('TransportsService', () => {
       horaPartida: '07:00:00',
       horaChegada: '08:00:00',
       diaSemana: DiasSemana.SegundaFeira,
-      idRota: createTransportDto.routaId,
+      idRota: createTransportDto.rotaId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -285,7 +285,7 @@ describe('TransportsService', () => {
     jest.spyOn(repository, 'create').mockResolvedValueOnce({
       id: 'new-transport-id',
       id_empresa: createTransportDto.empresaId,
-      id_rota: createTransportDto.routaId,
+      id_rota: createTransportDto.rotaId,
       id_horario: createTransportDto.horarioId,
       id_veiculo: createTransportDto.veiculoId,
       preco_passagem: createTransportDto.precoPassagem * 100, // Convert to cents
@@ -299,7 +299,7 @@ describe('TransportsService', () => {
       BadRequestException,
     );
     expect(logger.log).toHaveBeenCalledWith(
-      `Verificando se transporte já existe para os IDs: Empresa: ${createTransportDto.empresaId}, Rota: ${createTransportDto.routaId}, Horário: ${createTransportDto.horarioId}, Veículo: ${createTransportDto.veiculoId}`,
+      `Verificando se transporte já existe para os IDs: Empresa: ${createTransportDto.empresaId}, Rota: ${createTransportDto.rotaId}, Horário: ${createTransportDto.horarioId}, Veículo: ${createTransportDto.veiculoId}`,
     );
 
     expect(logger.error).toHaveBeenCalledWith(
@@ -311,7 +311,7 @@ describe('TransportsService', () => {
   it('should validate IDs before creating a transport', async () => {
     const createTransportDto = {
       empresaId: '1',
-      routaId: '2',
+      rotaId: '2',
       horarioId: '3',
       veiculoId: '4',
       precoPassagem: 20,
@@ -330,7 +330,7 @@ describe('TransportsService', () => {
     ]);
 
     jest.spyOn(routesRepository, 'findById').mockResolvedValueOnce({
-      id: createTransportDto.routaId,
+      id: createTransportDto.rotaId,
       nome: 'Rota A',
       idCidadeOrigem: '1',
       idCidadeDestino: '2',
@@ -347,7 +347,7 @@ describe('TransportsService', () => {
       horaPartida: '07:00:00',
       horaChegada: '08:00:00',
       diaSemana: DiasSemana.SegundaFeira,
-      idRota: createTransportDto.routaId,
+      idRota: createTransportDto.rotaId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -364,7 +364,7 @@ describe('TransportsService', () => {
     jest.spyOn(repository, 'create').mockResolvedValueOnce({
       id: 'new-transport-id',
       id_empresa: createTransportDto.empresaId,
-      id_rota: createTransportDto.routaId,
+      id_rota: createTransportDto.rotaId,
       id_horario: createTransportDto.horarioId,
       id_veiculo: createTransportDto.veiculoId,
       preco_passagem: createTransportDto.precoPassagem * 100, // Convert to cents
@@ -379,7 +379,7 @@ describe('TransportsService', () => {
       createTransportDto.empresaId,
     );
     expect(routesRepository.findById).toHaveBeenCalledWith(
-      createTransportDto.routaId,
+      createTransportDto.rotaId,
     );
     expect(scheduleRepository.findById).toHaveBeenCalledWith(
       createTransportDto.horarioId,
@@ -391,19 +391,19 @@ describe('TransportsService', () => {
 
     expect(spyValidadeIds).toHaveBeenCalledWith(
       createTransportDto.empresaId,
-      createTransportDto.routaId,
+      createTransportDto.rotaId,
       createTransportDto.horarioId,
       createTransportDto.veiculoId,
     );
     expect(logger.log).toHaveBeenCalledWith(
-      `Validando IDs - Empresa: ${createTransportDto.empresaId}, Rota: ${createTransportDto.routaId}, Horário: ${createTransportDto.horarioId}, Veículo: ${createTransportDto.veiculoId}`,
+      `Validando IDs - Empresa: ${createTransportDto.empresaId}, Rota: ${createTransportDto.rotaId}, Horário: ${createTransportDto.horarioId}, Veículo: ${createTransportDto.veiculoId}`,
     );
   });
 
   it('should log an error if validation fails', async () => {
     const createTransportDto = {
       empresaId: '1',
-      routaId: '2',
+      rotaId: '2',
       horarioId: '3',
       veiculoId: '4',
       precoPassagem: 20,
