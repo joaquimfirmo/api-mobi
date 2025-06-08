@@ -27,6 +27,7 @@ export interface EmpresasRotasHorariosTable {
   id_rota: ColumnType<string, string>;
   id_horario: ColumnType<string, string>;
   id_veiculo: ColumnType<string, string>;
+  preco_passagem: number;
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, null>;
 }
@@ -51,8 +52,10 @@ export interface HorariosTable {
 }
 
 export type Schedules = Selectable<HorariosTable>;
+export type Companies = Selectable<EmpresaTable>;
 export type Routes = Selectable<RotasTable>;
 export type Vehicles = Selectable<VeiculoTable>;
+export type Transports = Selectable<EmpresasRotasHorariosTable>;
 
 export interface RotasTable {
   id: ColumnType<string, string>;
@@ -85,3 +88,16 @@ export interface UsuarioTable {
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, null>;
 }
+
+export type TransportsRecord = {
+  rota: string;
+  empresa: string;
+  preco: number;
+  distancia_km: string;
+  duracao: string;
+  via_principal: string;
+  veiculo: string;
+  dia_semana: string;
+  horario_partida: string;
+  horario_chegada: string;
+};
