@@ -31,7 +31,7 @@ describe('TransportsRepository', () => {
             compile: jest.fn().mockReturnThis(),
             executeQuery: jest.fn().mockReturnThis(),
             execute: jest.fn(),
-            executeTakeFirst: jest.fn().mockReturnThis(),
+            executeTakeFirst: jest.fn().mockResolvedValue({ id: 'mock-id' }),
           },
         },
       ],
@@ -155,16 +155,29 @@ describe('TransportsRepository', () => {
     const idHorario = 'horario-id';
     const idVeiculo = 'veiculo-id';
     await repository.exists(idEmpresa, idRota, idHorario, idVeiculo);
+    expect(db.selectFrom).toHaveBeenCalledWith('empresas_rotas_horarios');
     expect(
-      db
-        .selectFrom('empresas_rotas_horarios')
-        .select('id')
-        .where('id_empresa', '=', idEmpresa)
-        .where('id_rota', '=', idRota)
-        .where('id_horario', '=', idHorario)
-        .where('id_veiculo', '=', idVeiculo),
-    );
+      db.selectFrom('empresas_rotas_horarios').select,
+    ).toHaveBeenCalledWith('id');
 
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_empresa', '=', idEmpresa);
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_rota', '=', idRota);
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_horario', '=', idHorario);
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_veiculo', '=', idVeiculo);
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledTimes(4);
     expect(
       db.selectFrom('empresas_rotas_horarios').select('id').executeTakeFirst,
     ).toHaveBeenCalled();
