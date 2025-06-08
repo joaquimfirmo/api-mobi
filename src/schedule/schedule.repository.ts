@@ -26,7 +26,7 @@ export class ScheduleRepository {
     });
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Schedule | null> {
     const [result] = await this.db
       .selectFrom('horarios')
       .selectAll()

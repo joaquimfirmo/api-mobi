@@ -5,6 +5,7 @@ import { ScheduleController } from './schedule.controller';
 import { ScheduleRepository } from './schedule.repository';
 
 @Module({
+  exports: [ScheduleRepository],
   controllers: [ScheduleController],
   providers: [
     ScheduleService,

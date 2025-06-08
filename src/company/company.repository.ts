@@ -5,7 +5,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
-import { Database } from 'src/common/database/types';
+import { Database, Companies } from 'src/common/database/types';
 import Company from './entities/company.entity';
 import { UpdateCompanyRequestDTO } from './dto';
 
@@ -24,7 +24,7 @@ export class CompanyRepository {
     }
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Companies[]> {
     try {
       return await this.db
         .selectFrom('empresas')

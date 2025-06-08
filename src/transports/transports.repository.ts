@@ -1,8 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
-import { Database } from 'src/common/database/types';
+import {
+  Database,
+  TransportsRecord,
+  Transports as TransportRecordSave,
+} from 'src/common/database/types';
 import { DatabaseException } from '../common/execptions/database.execption';
 import { TransportFilters } from './types/transports.types';
+import { Transports } from './entities/transports.entity';
+import { TransportsMapper } from './mapper/transports.mapper';
 
 @Injectable()
 export class TransportsRepository {
@@ -15,7 +21,7 @@ export class TransportsRepository {
     filters: TransportFilters,
     page: number = 0,
     limit: number = 25,
-  ) {
+  ): Promise<Transports[]> {
     try {
       const { diaSemana, horaPartida, idCidadeDestino, idCidadeOrigem } =
         filters;
@@ -50,6 +56,7 @@ export class TransportsRepository {
         .select([
           'rotas.nome as rota',
           'empresas.nome_fantasia as empresa',
+          'empresas_rotas_horarios.preco_passagem as preco',
           'rotas.distancia as distancia_km',
           'rotas.tempo_estimado as duracao',
           'rotas.via_principal as via_principal',
@@ -68,13 +75,81 @@ export class TransportsRepository {
       query.compile();
 
       const { rows } = await this.connection.executeQuery(query);
+      if (!rows || rows.length === 0) {
+        return [];
+      }
 
-      return rows;
+      return rows.map((record) =>
+        TransportsMapper.toDomain(record as TransportsRecord),
+      );
     } catch (error) {
       throw new DatabaseException(
         `Não foi possível buscar transportes`,
         error,
         'TransportsRepository.findAll',
+      );
+    }
+  }
+
+  async create(transport: Partial<TransportRecordSave>): Promise<any> {
+    try {
+      const record = await this.connection
+        .transaction()
+        .execute(async (trx) => {
+          return await trx
+            .insertInto('empresas_rotas_horarios')
+            .values({
+              id: transport.id,
+              id_empresa: transport.id_empresa,
+              id_rota: transport.id_rota,
+              id_horario: transport.id_horario,
+              id_veiculo: transport.id_veiculo,
+              preco_passagem: transport.preco_passagem,
+            })
+            .returning([
+              'id',
+              'id_empresa',
+              'id_rota',
+              'id_horario',
+              'id_veiculo',
+              'preco_passagem',
+              'created_at',
+              'updated_at',
+            ])
+            .executeTakeFirstOrThrow();
+        });
+
+      return record;
+    } catch (error) {
+      throw new DatabaseException(
+        `Não foi possível criar o transporte`,
+        error,
+        'TransportsRepository.create',
+      );
+    }
+  }
+
+  async exists(
+    idEmpresa: string,
+    idRota: string,
+    idHorario: string,
+    idVeiculo: string,
+  ): Promise<boolean> {
+    try {
+      const result = await this.connection
+        .selectFrom('empresas_rotas_horarios')
+        .select('id')
+        .where('id_empresa', '=', idEmpresa)
+        .where('id_rota', '=', idRota)
+        .where('id_horario', '=', idHorario)
+        .where('id_veiculo', '=', idVeiculo)
+        .executeTakeFirst();
+      return !!result;
+    } catch (error) {
+      throw new DatabaseException(
+        `Não foi possível verificar a existência do transporte`,
+        error,
+        'TransportsRepository.exists',
       );
     }
   }

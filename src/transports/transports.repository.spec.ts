@@ -5,6 +5,10 @@ import { DatabaseException } from '../common/execptions/database.execption';
 import { TransportsRepository } from './transports.repository';
 import { DiasSemana } from '../types/enums/dias-semana.enum';
 
+jest.mock('../common/utils/money.utils', () => ({
+  convertMoney: jest.fn((value) => value),
+}));
+
 describe('TransportsRepository', () => {
   let repository: TransportsRepository;
   let db: Kysely<Database>;
@@ -27,6 +31,7 @@ describe('TransportsRepository', () => {
             compile: jest.fn().mockReturnThis(),
             executeQuery: jest.fn().mockReturnThis(),
             execute: jest.fn(),
+            executeTakeFirst: jest.fn().mockResolvedValue({ id: 'mock-id' }),
           },
         },
       ],
@@ -58,6 +63,7 @@ describe('TransportsRepository', () => {
     ).toHaveBeenCalledWith([
       'rotas.nome as rota',
       'empresas.nome_fantasia as empresa',
+      'empresas_rotas_horarios.preco_passagem as preco',
       'rotas.distancia as distancia_km',
       'rotas.tempo_estimado as duracao',
       'rotas.via_principal as via_principal',
@@ -91,6 +97,7 @@ describe('TransportsRepository', () => {
     ).toHaveBeenCalledWith([
       'rotas.nome as rota',
       'empresas.nome_fantasia as empresa',
+      'empresas_rotas_horarios.preco_passagem as preco',
       'rotas.distancia as distancia_km',
       'rotas.tempo_estimado as duracao',
       'rotas.via_principal as via_principal',
@@ -140,5 +147,81 @@ describe('TransportsRepository', () => {
     );
 
     expect(whereClause).toBeDefined();
+  });
+
+  it('should call exists method', async () => {
+    const idEmpresa = 'empresa-id';
+    const idRota = 'rota-id';
+    const idHorario = 'horario-id';
+    const idVeiculo = 'veiculo-id';
+    await repository.exists(idEmpresa, idRota, idHorario, idVeiculo);
+    expect(db.selectFrom).toHaveBeenCalledWith('empresas_rotas_horarios');
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select,
+    ).toHaveBeenCalledWith('id');
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_empresa', '=', idEmpresa);
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_rota', '=', idRota);
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_horario', '=', idHorario);
+
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledWith('id_veiculo', '=', idVeiculo);
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').where,
+    ).toHaveBeenCalledTimes(4);
+    expect(
+      db.selectFrom('empresas_rotas_horarios').select('id').executeTakeFirst,
+    ).toHaveBeenCalled();
+  });
+
+  it('should throw DatabaseException if exists fails', async () => {
+    db.selectFrom('empresas_rotas_horarios').select = jest
+      .fn()
+      .mockReturnValue(new Error('Database error'));
+
+    await expect(
+      repository.exists('empresa-id', 'rota-id', 'horario-id', 'veiculo-id'),
+    ).rejects.toThrow(DatabaseException);
+    await expect(
+      repository.exists('empresa-id', 'rota-id', 'horario-id', 'veiculo-id'),
+    ).rejects.toThrow('Não foi possível verificar a existência do transporte');
+  });
+
+  it('should call create method', async () => {
+    const transport = {
+      id: '1',
+      id_empresa: 'empresa-id',
+      id_rota: 'rota-id',
+      id_horario: 'horario-id',
+      id_veiculo: 'veiculo-id',
+      preco_passagem: 100,
+    };
+
+    db.transaction = jest.fn().mockReturnValue({
+      execute: jest.fn().mockResolvedValue(transport),
+    });
+
+    await repository.create(transport);
+    expect(db.transaction).toHaveBeenCalled();
+  });
+
+  it('should throw DatabaseException if create fails', async () => {
+    db.transaction = jest.fn().mockReturnValue({
+      execute: jest.fn().mockRejectedValue(new Error('Database error')),
+    });
+
+    await expect(repository.create({})).rejects.toThrow(DatabaseException);
+    await expect(repository.create({})).rejects.toThrow(
+      'Não foi possível criar o transporte',
+    );
   });
 });

@@ -20,5 +20,6 @@ import { CityModule } from 'src/city/city.module';
   ],
   controllers: [CompanyController],
   imports: [IbgeModule, CityModule],
+  exports: [CompanyRepository],
 })
 export class CompanyModule {}
