@@ -10,13 +10,16 @@ describe('TransportsController', () => {
     {
       rota: 'Cidade A - Cidade B',
       empresa: 'Empresa A',
-      distancia_km: '60',
+      preco: 20,
+      distanciaKm: '60',
       duracao: {
         hours: 1,
       },
       veiculo: 'Van',
-      horario_partida: '07:00:00',
-      horario_chegada: '08:00:00',
+      viaPrincipal: 'Via Principal A',
+      diaSemana: 'Segunda-feira',
+      horarioPartida: '07:00:00',
+      horarioChegada: '08:00:00',
     },
   ];
 
@@ -28,6 +31,7 @@ describe('TransportsController', () => {
           provide: TransportsService,
           useValue: {
             findAll: jest.fn(),
+            create: jest.fn(),
           },
         },
       ],
@@ -56,5 +60,21 @@ describe('TransportsController', () => {
 
     const { page, limit, ...rest } = filters;
     expect(service.findAll).toHaveBeenCalledWith(rest, page, limit);
+  });
+
+  it('should call create method from service', async () => {
+    const createTransportDto = {
+      empresaId: '1',
+      routaId: '1',
+      horarioId: '1',
+      veiculoId: '1',
+      precoPassagem: 20,
+    };
+    jest.spyOn(service, 'create').mockResolvedValueOnce(createTransportDto);
+    expect(await controller.create(createTransportDto)).toBe(
+      createTransportDto,
+    );
+    expect(service.create).toHaveBeenCalledTimes(1);
+    expect(service.create).toHaveBeenCalledWith(createTransportDto);
   });
 });
